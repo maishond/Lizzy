@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: Minecraft;
+	src: url(/fonts/Minecraft.woff) format('woff');
+}
+
+:global(body) {
+	font-family: 'Minecraft', monospace;
+	--s: rgba(0, 0, 0, 0.5);
+	background-image: linear-gradient(to bottom, var(--s), var(--s)), url('/background.png');
+	background-position: center bottom;
+	@apply bg-cover bg-fixed text-[#383838];
+}
+
+:global(.text-shadow) {
+	text-shadow: 2px 2px 0 #3f3f3f;
+}
