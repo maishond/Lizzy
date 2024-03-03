@@ -96,6 +96,7 @@ export async function setInventory(body: string, storageSystemId: string) {
 	}
 
 	// ! Create all items
+	console.time('deleting');
 	await prisma.item.deleteMany({
 		where: {
 			container: {
@@ -103,8 +104,10 @@ export async function setInventory(body: string, storageSystemId: string) {
 			},
 		},
 	});
+	console.timeEnd('deleting');
 
 	// Add all items
+	console.time('setInventory add');
 	await prisma.$transaction(
 		instructions.map((instruction) => {
 			const containerDbId = containerIdMap[instruction.inGameContainerId];
@@ -123,6 +126,7 @@ export async function setInventory(body: string, storageSystemId: string) {
 			});
 		}),
 	);
+	console.timeEnd('setInventory add');
 
 	console.info(chalk.cyan('Inventory updated, compressing'));
 
