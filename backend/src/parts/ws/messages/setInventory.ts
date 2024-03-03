@@ -108,24 +108,29 @@ export async function setInventory(body: string, storageSystemId: string) {
 
 	// Add all items
 	console.time('setInventory add');
-	await prisma.$transaction(
-		instructions.map((instruction) => {
-			const containerDbId = containerIdMap[instruction.inGameContainerId];
-			if (!containerDbId)
-				throw new Error(
-					`Container ID not found (${instruction.inGameContainerId})`,
-				);
+	const create: {
+		containerId: string;
+		slot: number;
+		quantity: number;
+		inGameId: string;
+	}[] = [];
+	instructions.forEach((instruction) => {
+		const containerDbId = containerIdMap[instruction.inGameContainerId];
+		if (!containerDbId)
+			throw new Error(
+				`Container ID not found (${instruction.inGameContainerId})`,
+			);
 
-			return prisma.item.create({
-				data: {
-					containerId: containerDbId,
-					slot: instruction.slot,
-					quantity: instruction.count,
-					inGameId: instruction.itemName,
-				},
-			});
-		}),
-	);
+		create.push({
+			containerId: containerDbId,
+			slot: instruction.slot,
+			quantity: instruction.count,
+			inGameId: instruction.itemName,
+		});
+	});
+	await prisma.item.createMany({
+		data: create,
+	});
 	console.timeEnd('setInventory add');
 
 	console.info(chalk.cyan('Inventory updated, compressing'));
