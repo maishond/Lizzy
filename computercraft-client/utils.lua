@@ -36,10 +36,10 @@ function getStorageSystemId()
 
     -- Request storage system id through rednet
     peripheral.find("modem", rednet.open)
-    rednet.broadcast('storageSystemId', 'master')
 
     local value = ''
     while value == '' do
+        rednet.broadcast('storageSystemId', 'master')
         local senderId, message, protocol = rednet.receive('storageSystemId', 2)
 
         if message ~= nil and message ~= 'hostname' and message ~= 'storageSystemId' then
