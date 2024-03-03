@@ -33,6 +33,7 @@ export const compressables: Record<string, string> = {
 	'minecraft:iron_ingot': 'minecraft:iron_nugget',
 	'minecraft:iron_block': 'minecraft:iron_ingot',
 	'minecraft:gold_ingot': 'minecraft:gold_nugget',
+	'minecraft:copper_ingot': 'minecraft:copper_nugget',
 	'minecraft:gold_block': 'minecraft:gold_ingot',
 	'minecraft:emerald_block': 'minecraft:emerald',
 	'minecraft:lapis_block': 'minecraft:lapis_lazuli',
