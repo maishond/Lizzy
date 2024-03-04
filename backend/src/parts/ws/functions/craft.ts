@@ -37,7 +37,7 @@ export const compressables: Record<string, string> = {
 	'minecraft:emerald_block': 'minecraft:emerald',
 	'minecraft:lapis_block': 'minecraft:lapis_lazuli',
 	'minecraft:redstone_block': 'minecraft:redstone',
-	'minecraft:copper_ingot': 'minecraft:copper_nugget',
+	'minecraft:copper_ingot': 'create:copper_nugget',
 	'minecraft:copper_block': 'minecraft:copper_ingot',
 	'minecraft:coal_block': 'minecraft:coal',
 	'farmersdelight:onion_crate': 'farmersdelight:onion',
