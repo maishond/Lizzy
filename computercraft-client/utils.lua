@@ -181,7 +181,7 @@ function sendMessage(msg)
     local batch = os.date()
 
     function getBaseMessage()
-        local xyz = fs.exists('xyz.txt') and fs.open('xyz.txt', 'r').readAll() or '0 0 0'
+        local xyz = fs.exists('xyz.txt') and fs.open('xyz.txt', 'r').readLine() or '0 0 0'
         return 'IDENTIFY ' .. turtleName .. ' ' .. storageSystemId .. ' ' .. xyz .. '\nBATCH ' .. batch
     end
 

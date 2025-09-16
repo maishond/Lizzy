@@ -29,7 +29,7 @@ export async function getAps(storageSystemId: string) {
 			name: ap.name,
 			inGameId: ap.inGameId,
 			online:
-				aps[storageSystemId]?.[ap.inGameId]?.readyState === ws.OPEN ?? false,
+				aps[storageSystemId]?.[ap.inGameId]?.readyState === ws.OPEN,
 			ws: aps[storageSystemId]?.[ap.inGameId],
 			position: {
 				x: ap.x,
