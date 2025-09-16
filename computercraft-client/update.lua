@@ -18,7 +18,7 @@ end
 local isMasterComputer = fs.exists('is-master.txt')
 local onDeviceHostName = fs.exists('hostname.txt') and fs.open('hostname.txt', 'r').readLine() or nil
 print('Is master: ' .. tostring(isMasterComputer))
-local hostNameValue = 'bra-mineral-ultimately-saw.trycloudflare.com'
+local hostNameValue = 'lizzy.jipfr.nl'
 local hostName = isMasterComputer and (onDeviceHostName or hostNameValue) or getHostName()
 local baseUrl = 'https://' .. hostName
 
