@@ -36,6 +36,29 @@ router.get('/:id', async (req, res) => {
 	res.send({ ...system, items, accessPoints: apsWithoutWs });
 });
 
+router.get('/:id/diffs', async (req, res) => {
+	const id = req.params.id;
+
+	const system = await prisma.storageSystem.findUnique({
+		where: { id },
+	});
+
+	// Get items
+	const diffsQuery = await prisma.itemDiff.findMany({
+		where: { storageSystemId: id },
+	});
+
+	const diffs = diffsQuery.map((entry) => {
+		return {
+			at: entry.created_at,
+			item: entry.itemId,
+			diff: entry.diff
+		}
+	})
+
+	res.send({ ...system, diffs });
+});
+
 router.get('/:id/drop-item/:item/:count/:ap', async (req, res) => {
 	let storageSystemId = req.params.id;
 	let itemId = req.params.item;
