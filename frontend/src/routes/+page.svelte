@@ -1,4 +1,5 @@
 <script lang="ts">
+	import chartjs from 'chart.js';
 	import type { Item as ItemType } from '$lib/types';
 
 	import Card from '$lib/components/Card.svelte';
@@ -16,8 +17,12 @@
 	import { API_BASE_URL, TMP_SYSTEM_ID } from '$lib/config';
 
 	let itemsRes: { [key: string]: number } = {};
-	let storageName = 'Loading...';
+	let diffsRes: { at: string; item: string; diff: number }[] = [];
+	let storageName = 'Loading...';	
+	let chartCanvas: HTMLCanvasElement | null;
+
 	let error = '';
+	let enabledDiffs = ['minecraft:wheat'];
 
 	function doFetch() {
 		fetch(API_BASE_URL + '/system/' + TMP_SYSTEM_ID)
@@ -30,6 +35,64 @@
 				console.error(err);
 				error = 'Failed to load inventory';
 			});
+
+		fetch(API_BASE_URL + '/system/' + TMP_SYSTEM_ID + '/diffs')
+			.then((d) => d.json())
+			.then((res) => {
+				storageName = res.name;
+				diffsRes = res.diffs;
+				doChart()
+			})
+			.catch((err) => {
+				console.error(err);
+				error = 'Failed to load diffs';
+			});
+	}
+
+	function getTexture(item: { id: string }) {
+		const [namespace, itemName] = item.id.split(':');
+		return `/items/${namespace}/items/${itemName}.png`;
+	}
+
+	function doChart() {
+
+		if(!chartCanvas) return
+		let ctx = chartCanvas.getContext('2d');
+		let datasets = enabledDiffs.map(itemId => {
+			let v = 0;
+			let data = diffsRes
+				.filter(entry => entry.item === itemId)
+				.map(entry => {
+					v += entry.diff;
+					return {
+						x: Math.floor(new Date(entry.at).getTime() / 6000e3),
+						y: v
+					};
+				});
+
+			const img = document.createElement("img")
+			img.src = getTexture({id: itemId})
+			img.width = 24
+			img.height = 24
+
+			return {
+				label: itemId,
+				data,
+				showLine: false,
+				pointStyle: img
+			};
+		});
+		let chart = new chartjs(ctx, {
+			type: 'scatter',
+			data: {
+				datasets
+			},
+			options: {
+				legend: {
+					display: false
+				}
+			}
+		});
 	}
 
 	onMount(() => {
@@ -53,7 +116,10 @@
 </script>
 
 <div class="my-16 grid w-full grid-cols-[1fr,300px] gap-8">
-	<div>
+	<div class="space-y-4">
+		<Card>
+			<canvas bind:this={chartCanvas} id="myChart"></canvas>
+		</Card>
 		<Card>
 			<Title>Inventory</Title>
 			{#if error}

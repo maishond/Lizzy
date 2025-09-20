@@ -57,9 +57,21 @@ export async function setInventory(body: string, storageSystemId: string) {
 		...Object.keys(newItemCount),
 		...Object.keys(currentItemCount),
 	]);
-	for (const itemName of keys) {
-		const diff =
-			(newItemCount[itemName] || 0) - (currentItemCount[itemName] || 0);
+	await Promise.all(Array.from(keys).map(async (itemName) => {
+
+		const allDiffEntriesForItem = await prisma.itemDiff.findMany({
+			where: {
+				storageSystemId,
+				itemId: itemName
+			}
+		})
+
+		let diffTotal = 0
+		for(const diffEntry of allDiffEntriesForItem) {
+			diffTotal += diffEntry.diff
+		}
+
+		const diff = (newItemCount[itemName] || 0) - diffTotal
 
 		if (diff !== 0) {
 			diffs.push({
@@ -67,7 +79,7 @@ export async function setInventory(body: string, storageSystemId: string) {
 				diff,
 			});
 		}
-	}
+	}))
 
 	await prisma.itemDiff.createMany({
 		data: diffs.map((diff) => ({
