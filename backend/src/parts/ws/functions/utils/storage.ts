@@ -50,7 +50,6 @@ export async function getItemStoragePossibilities(itemName: string) {
 				slot: nonStackedItem.slot,
 				container: container.inGameId,
 			});
-			possibilities.length++;
 		}
 	}
 
@@ -61,7 +60,6 @@ export async function getItemStoragePossibilities(itemName: string) {
 				slot: undefined,
 				container: container.inGameId,
 			});
-			possibilities.length++;
 		}
 	}
 	console.log(itemName, possibilities);
