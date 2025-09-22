@@ -55,7 +55,9 @@ function checkInterval() {
 		} else {
 			console.warn(
 				chalk.bgYellow('Retrying'),
-				`Retrying message to ${message.receiver}`,
+				`Retrying message ${chalk.bgYellow(
+					message.message.split('\n')[1],
+				)} to ${message.receiver}`,
 				chalk.red(`(${message.retries})`),
 			);
 			ws.send(message.message);
