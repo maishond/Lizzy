@@ -12,10 +12,12 @@ import type { MoveableEntry } from '../types';
 export let isDepositing = false;
 
 export function setIsDepositing(v: boolean) {
+	console.log(chalk.bgRed('SET DEPOSITING', v));
 	isDepositing = v;
 }
 
 export async function deposit() {
+	console.log(isDepositing);
 	if (isDepositing) return;
 	isDepositing = true;
 	console.info(chalk.green('Depositing'));
