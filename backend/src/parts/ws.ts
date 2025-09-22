@@ -88,7 +88,7 @@ wss.on('connection', (ws) => {
 					const message = lines.slice(1).join('\n');
 					const pendingMsg = pendingMessages.find((m) => m.id === id);
 					console.warn(
-						chalk.bgGray('Message acknowleged: '),
+						chalk.bgGreenBright('Message acknowleged: '),
 						message,
 						'\n',
 						(pendingMsg?.message || '').split('\n').slice(0, 3),
