@@ -36,7 +36,7 @@ export async function getItemStoragePossibilities(itemName: string) {
 				Item: true,
 			},
 		})
-	).sort(() => Math.random() - 0.5);
+	).sort((a, b) => a.slotsUsed - b.slotsUsed);
 
 	const possibilities: { slot?: number; container: string }[] = [];
 	const maxPossibilities = 10;
