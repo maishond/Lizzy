@@ -25,17 +25,17 @@ export function generateMoveItemsBetweenContainers(
 }
 
 export async function getItemStoragePossibilities(itemName: string) {
-	const containers = await prisma.container.findMany({
-		where: {
-			storageSystemId,
-			type: 'minecraft:chest',
-		},
-		include: {
-			Item: true,
-		},
-	});
-
-	containers.sort(() => Math.random() - 0.5);
+	const containers = (
+		await prisma.container.findMany({
+			where: {
+				storageSystemId,
+				type: 'minecraft:chest',
+			},
+			include: {
+				Item: true,
+			},
+		})
+	).sort(() => Math.random() - 0.5);
 
 	const possibilities: { slot?: number; container: string }[] = [];
 	const maxPossibilities = 10;
