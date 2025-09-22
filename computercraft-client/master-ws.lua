@@ -14,9 +14,17 @@ function getItemsAndContainersDetailed()
             containerSizeCache[container.id] = container.size()
         end
 
+        slotsUsed = 0
+        items = container.list()
+        for i = 1, #container.size() do
+            if items[i] ~= nil then
+                slotsUsed = slotsUsed + 1
+            end
+        end
+
         newContainers[i] = containers[i]
         newContainers[i].slots = containerSizeCache[container.id]
-        newContainers[i].slotsUsed = #container.list()
+        newContainers[i].slotsUsed = slotsUsed
         newContainers[i].type = peripheral.getType(container.id)
 
         -- Get list of items
