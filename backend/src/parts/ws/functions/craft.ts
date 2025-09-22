@@ -186,5 +186,6 @@ export async function craft(itemName: string, perSlot = 1) {
 	await sendMessageToAp(storageSystemId, crafterName, message);
 	const crafted = await sendMessageToAp(storageSystemId, crafterName, 'CRAFT');
 	console.info(chalk.cyan(`${crafterName} crafted ${crafted}`));
+	setIsDepositing(false);
 	return crafted;
 }
