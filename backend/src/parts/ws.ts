@@ -91,7 +91,7 @@ wss.on('connection', (ws) => {
 						chalk.bgGreenBright('Message acknowleged: '),
 						message,
 						'\n',
-						(pendingMsg?.message || '').split('\n').slice(0, 3),
+						(pendingMsg?.message || '').split('\n').slice(0, 5),
 					);
 
 					pendingMsg?.acknowledge(message);
