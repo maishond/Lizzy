@@ -65,6 +65,6 @@ export async function getItemStoragePossibilities(itemName: string) {
 			possibilitiesFound++;
 		}
 	}
-
+	console.log(itemName, possibilities);
 	return possibilities;
 }
