@@ -54,7 +54,6 @@ export const compressables: Record<string, string> = {
 	'create:zinc_ingot': 'create:zinc_nugget',
 	'create:zinc_block': 'create:zinc_ingot',
 	'create:brass_block': 'create:brass_ingot',
-	'betterend:charcoal_block': 'minecraft:charcoal',
 	'betterend:thallasium_block': 'betterend:thallasium_ingot',
 	'minecraft:hay_block': 'minecraft:wheat',
 	'minecraft:bone_block': 'minecraft:bone_meal',

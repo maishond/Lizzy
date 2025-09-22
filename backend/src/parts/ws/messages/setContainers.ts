@@ -16,16 +16,14 @@ export async function setContainers(body: string, storageSystemId: string) {
 		})
 		.filter((ap) => ap.id !== '' && ap.type !== '' && ap.slots !== 0);
 
-	console.log(
-		await prisma.container.deleteMany({
-			where: {
-				storageSystemId,
-				inGameId: {
-					notIn: instructions.map((ap) => ap.id),
-				},
+	await prisma.container.deleteMany({
+		where: {
+			storageSystemId,
+			inGameId: {
+				notIn: instructions.map((ap) => ap.id),
 			},
-		}),
-	);
+		},
+	});
 
 	for (const ap of instructions) {
 		await prisma.container.upsert({

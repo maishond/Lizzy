@@ -18,11 +18,11 @@
 
 	let itemsRes: { [key: string]: number } = {};
 	let diffsRes: { at: string; item: string; diff: number }[] = [];
-	let storageName = 'Loading...';	
+	let storageName = 'Loading...';
 	let chartCanvas: HTMLCanvasElement | null;
 
 	let error = '';
-	let enabledDiffs = ['minecraft:wheat'];
+	let enabledDiffs = ['minecraft:gold_block', 'minecraft:iron_block'];
 
 	function doFetch() {
 		fetch(API_BASE_URL + '/system/' + TMP_SYSTEM_ID)
@@ -41,7 +41,7 @@
 			.then((res) => {
 				storageName = res.name;
 				diffsRes = res.diffs;
-				doChart()
+				doChart();
 			})
 			.catch((err) => {
 				console.error(err);
@@ -55,29 +55,32 @@
 	}
 
 	function doChart() {
-
-		if(!chartCanvas) return
+		if (!chartCanvas) return;
 		let ctx = chartCanvas.getContext('2d');
-		let datasets = enabledDiffs.map(itemId => {
+		let datasets = enabledDiffs.map((itemId) => {
 			let v = 0;
 			let data = diffsRes
-				.filter(entry => entry.item === itemId)
-				.map(entry => {
+				.filter((entry) => entry.item === itemId)
+				// np
+				.map((entry) => {
 					v += entry.diff;
 					return {
-						x: Math.floor(new Date(entry.at).getTime() / 6000e3),
+						x: Math.floor(new Date(entry.at).getTime() / 1e3),
 						y: v
 					};
-				});
+				})
+				.sort((a, b) => b.x - a.x);
 
-			const img = document.createElement("img")
-			img.src = getTexture({id: itemId})
-			img.width = 24
-			img.height = 24
+			const img = document.createElement('img');
+			img.src = getTexture({ id: itemId });
+			img.width = 24;
+			img.height = 24;
+			img.style = 'border: 1px solid orange';
 
 			return {
 				label: itemId,
 				data,
+				backgroundColor: 'transparent',
 				showLine: false,
 				pointStyle: img
 			};
@@ -111,8 +114,8 @@
 		filteredItems = filterItems(itemsSorted, searchValue);
 	}
 
-	$: searchValue, searchItems();
-	$: items, searchItems();
+	$: (searchValue, searchItems());
+	$: (items, searchItems());
 </script>
 
 <div class="my-16 grid w-full grid-cols-[1fr,300px] gap-8">
