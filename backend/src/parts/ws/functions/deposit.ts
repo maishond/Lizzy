@@ -78,6 +78,8 @@ export async function deposit() {
 		}
 	}
 
+	console.info(chalk.green('Depositing'), `${moveables.length} items`);
+
 	const msg = await sendMessageToAp(
 		storageSystemId,
 		apName,
