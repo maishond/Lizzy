@@ -52,31 +52,33 @@ export async function deposit() {
 
 	const moveables: MoveableEntry[] = [];
 
-	for (const barrel of barrelsWithItems) {
-		for (const item of barrel.Item) {
-			if (!apName) continue;
+	await Promise.all(
+		barrelsWithItems.map((barrel) => {
+			for (const item of barrel.Item) {
+				if (!apName) continue;
 
-			const storagePossibilities = await getItemStoragePossibilities(
-				item.inGameId,
-			);
+				const storagePossibilities = await getItemStoragePossibilities(
+					item.inGameId,
+				);
 
-			// ! This returns a list of contains the item can (maybe?) be moved to
-			// ! It can't now for certain, since the DB might not 100% be up-to-date
-			// ! In the future, it might not be a bad idea to return the containers items have been moved to
-			// ! ^ in order to attempt reflecting that in the DB.
-			// But not now. I don't feel like it.
+				// ! This returns a list of contains the item can (maybe?) be moved to
+				// ! It can't now for certain, since the DB might not 100% be up-to-date
+				// ! In the future, it might not be a bad idea to return the containers items have been moved to
+				// ! ^ in order to attempt reflecting that in the DB.
+				// But not now. I don't feel like it.
 
-			moveables.push(
-				...storagePossibilities.map((possibility) => ({
-					fromContainer: barrel.inGameId,
-					fromSlot: item.slot,
-					toContainer: possibility.container,
-					toSlot: possibility.slot,
-					quantity: item.quantity,
-				})),
-			);
-		}
-	}
+				moveables.push(
+					...storagePossibilities.map((possibility) => ({
+						fromContainer: barrel.inGameId,
+						fromSlot: item.slot,
+						toContainer: possibility.container,
+						toSlot: possibility.slot,
+						quantity: item.quantity,
+					})),
+				);
+			}
+		}),
+	);
 
 	console.info(chalk.green('Depositing'), `${moveables.length} items`);
 
