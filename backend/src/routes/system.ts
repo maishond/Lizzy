@@ -52,9 +52,9 @@ router.get('/:id/diffs', async (req, res) => {
 		return {
 			at: entry.created_at,
 			item: entry.itemId,
-			diff: entry.diff
-		}
-	})
+			diff: entry.diff,
+		};
+	});
 
 	res.send({ ...system, diffs });
 });
@@ -90,10 +90,14 @@ router.get('/:id/drop-item/:item/:count/:ap', async (req, res) => {
 		if (item.quantity > 0) {
 			let toDrop = Math.min(item.quantity, requiredQuantity - foundCount);
 			foundCount += toDrop;
-			await prisma.item.update({
-				where: { id: item.id },
-				data: { quantity: item.quantity - toDrop },
-			});
+			try {
+				await prisma.item.update({
+					where: { id: item.id },
+					data: { quantity: item.quantity - toDrop },
+				});
+			} catch (err) {
+				console.error(err);
+			}
 			moveables.push({
 				fromContainer: item.container.inGameId,
 				fromSlot: item.slot,
