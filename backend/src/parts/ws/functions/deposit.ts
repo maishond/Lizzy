@@ -53,10 +53,11 @@ export async function deposit() {
 	const moveables: MoveableEntry[] = [];
 
 	await Promise.all(
-		barrelsWithItems.map((barrel) => {
+		barrelsWithItems.map(async (barrel) => {
 			for (const item of barrel.Item) {
 				if (!apName) continue;
 
+				console.log('Finding storage possibilities for', item.inGameId);
 				const storagePossibilities = await getItemStoragePossibilities(
 					item.inGameId,
 				);
