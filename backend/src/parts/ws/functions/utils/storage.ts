@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { storageSystemId } from '../../../../conf';
 import { prisma } from '../../../prisma';
 import type { MoveableEntry } from '../../types';
@@ -62,10 +63,8 @@ export async function getItemStoragePossibilities(itemName: string) {
 			});
 		}
 	}
-	console.log(itemName, possibilities, containers.length);
 	console.log(
-		itemName,
-		containers.map((t) => `(${t.slots},${t.slotsUsed})`).join(''),
+		chalk.yellow(`Found ${possibilities.length} possibilities for ${itemName}`),
 	);
 	return possibilities;
 }

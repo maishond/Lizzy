@@ -12,7 +12,7 @@ import type { MoveableEntry } from '../types';
 export let isDepositing = false;
 
 export function setIsDepositing(v: boolean) {
-	console.log(chalk.bgRed('SET DEPOSITING', v));
+	console.log(chalk.bgRed());
 	isDepositing = v;
 }
 
@@ -62,7 +62,6 @@ export async function deposit() {
 		for (const item of barrel.Item) {
 			if (!apName) continue;
 
-			console.log('Finding storage possibilities for', item.inGameId);
 			const storagePossibilities = await getItemStoragePossibilities(
 				item.inGameId,
 			);
