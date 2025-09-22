@@ -88,6 +88,7 @@ export async function deposit() {
 		apName,
 		generateMoveItemsBetweenContainers(moveables),
 	);
+	console.info(msg);
 
 	const end = Date.now();
 

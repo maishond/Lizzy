@@ -86,8 +86,15 @@ wss.on('connection', (ws) => {
 
 					const id = lines[0]?.split(' ')[1]?.trim();
 					const message = lines.slice(1).join('\n');
+					const pendingMsg = pendingMessages.find((m) => m.id === id);
+					console.warn(
+						chalk.bgGray('Message acknowleged: '),
+						message,
+						'\n',
+						(pendingMsg?.message || '').split('\n').slice(0, 3),
+					);
 
-					pendingMessages.find((m) => m.id === id)?.acknowledge(message);
+					pendingMsg?.acknowledge(message);
 				} else {
 					// Handle message
 					handleMessage(batch);
