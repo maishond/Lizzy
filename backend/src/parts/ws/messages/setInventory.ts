@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { prisma } from '../..';
 import { compressables, craft } from '../functions/craft';
-import { deposit } from '../functions/deposit';
+import { deposit, isDepositing } from '../functions/deposit';
 
 const itemCompressionMap: Record<string, string> = Object.fromEntries(
 	Object.entries(compressables).map(([k, v]) => [v, k]),
@@ -57,29 +57,30 @@ export async function setInventory(body: string, storageSystemId: string) {
 		...Object.keys(newItemCount),
 		...Object.keys(currentItemCount),
 	]);
-	await Promise.all(Array.from(keys).map(async (itemName) => {
-
-		const allDiffEntriesForItem = await prisma.itemDiff.findMany({
-			where: {
-				storageSystemId,
-				itemId: itemName
-			}
-		})
-
-		let diffTotal = 0
-		for(const diffEntry of allDiffEntriesForItem) {
-			diffTotal += diffEntry.diff
-		}
-
-		const diff = (newItemCount[itemName] || 0) - diffTotal
-
-		if (diff !== 0) {
-			diffs.push({
-				itemId: itemName,
-				diff,
+	await Promise.all(
+		Array.from(keys).map(async (itemName) => {
+			const allDiffEntriesForItem = await prisma.itemDiff.findMany({
+				where: {
+					storageSystemId,
+					itemId: itemName,
+				},
 			});
-		}
-	}))
+
+			let diffTotal = 0;
+			for (const diffEntry of allDiffEntriesForItem) {
+				diffTotal += diffEntry.diff;
+			}
+
+			const diff = (newItemCount[itemName] || 0) - diffTotal;
+
+			if (diff !== 0) {
+				diffs.push({
+					itemId: itemName,
+					diff,
+				});
+			}
+		}),
+	);
 
 	await prisma.itemDiff.createMany({
 		data: diffs.map((diff) => ({
@@ -152,7 +153,7 @@ export async function setInventory(body: string, storageSystemId: string) {
 	let canCraft = true;
 	for (const compressableItemName in itemCompressionMap) {
 		const compressed = itemCompressionMap[compressableItemName];
-		if (!compressed || !canCraft) continue;
+		if (!compressed || !canCraft || isDepositing) continue;
 		let quantity = await getItemQuantity(compressableItemName);
 		while (quantity >= 9 && canCraft) {
 			console.info(chalk.cyan(`Compressing ${compressed}`));

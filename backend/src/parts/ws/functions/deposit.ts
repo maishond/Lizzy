@@ -9,7 +9,7 @@ import {
 import { storageSystemId } from '../../../conf';
 import type { MoveableEntry } from '../types';
 
-let isDepositing = false;
+export let isDepositing = false;
 
 export async function deposit() {
 	if (isDepositing) return;
