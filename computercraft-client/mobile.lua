@@ -39,7 +39,7 @@ function fetchData()
         local apX = data.position.x or 0
         local apY = data.position.y or 0
         local apZ = data.position.z or 0
-        local x, y, z = gps.locate() or 0, 0, 0
+        local x, y, z = gps.locate()
         local distance = math.sqrt(math.abs(apX - x) ^ 2 + math.abs(apY - y) ^ 2 + math.abs(apZ - z) ^ 2)
         aps[i].distance = distance
     end
