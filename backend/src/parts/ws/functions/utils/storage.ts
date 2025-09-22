@@ -39,10 +39,9 @@ export async function getItemStoragePossibilities(itemName: string) {
 
 	const possibilities: { slot?: number; container: string }[] = [];
 	const maxPossibilities = 10;
-	let possibilitiesFound = 0;
 
 	for (const container of containers) {
-		if (possibilitiesFound > maxPossibilities) break;
+		if (possibilities.length > maxPossibilities) break;
 		const nonStackedItem = container.Item.find(
 			(i) => i.inGameId === itemName && i.quantity < 64,
 		);
@@ -51,18 +50,18 @@ export async function getItemStoragePossibilities(itemName: string) {
 				slot: nonStackedItem.slot,
 				container: container.inGameId,
 			});
-			possibilitiesFound++;
+			possibilities.length++;
 		}
 	}
 
 	for (const container of containers) {
-		if (possibilitiesFound > maxPossibilities) break;
+		if (possibilities.length > maxPossibilities) break;
 		if (container.slotsUsed < container.slots) {
 			possibilities.push({
 				slot: undefined,
 				container: container.inGameId,
 			});
-			possibilitiesFound++;
+			possibilities.length++;
 		}
 	}
 	console.log(itemName, possibilities);
