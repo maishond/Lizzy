@@ -63,5 +63,9 @@ export async function getItemStoragePossibilities(itemName: string) {
 		}
 	}
 	console.log(itemName, possibilities, containers.length);
+	console.log(
+		itemName,
+		containers.map((t) => t.slots < t.slotsUsed),
+	);
 	return possibilities;
 }
