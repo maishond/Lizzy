@@ -11,6 +11,10 @@ import type { MoveableEntry } from '../types';
 
 export let isDepositing = false;
 
+export function setIsDepositing(v: boolean) {
+	isDepositing = v;
+}
+
 export async function deposit() {
 	if (isDepositing) return;
 	isDepositing = true;

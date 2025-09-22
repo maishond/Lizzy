@@ -4,6 +4,7 @@ import { storageSystemId } from '../../../conf';
 import { aps, sendMessageToAp } from '../ap';
 import { generateMoveItemsBetweenContainers } from './utils/storage';
 import type { MoveableEntry } from '../types';
+import { isDepositing, setIsDepositing } from './deposit';
 
 type RecipeItem = string | undefined;
 type Recipe = [RecipeItem, RecipeItem, RecipeItem][];
@@ -82,6 +83,7 @@ const canCraftCache: {
 } = {};
 
 export async function craft(itemName: string, perSlot = 1) {
+	setIsDepositing(true);
 	// Find turtle that can craft
 	let crafterName;
 	if (canCraftCache[storageSystemId]) {
