@@ -22,7 +22,7 @@
 	let chartCanvas: HTMLCanvasElement | null;
 
 	let error = '';
-	let enabledDiffs = ['minecraft:gold_block', 'minecraft:iron_block'];
+	let enabledDiffs = ['minecraft:torch'];
 
 	function doFetch() {
 		fetch(API_BASE_URL + '/system/' + TMP_SYSTEM_ID)
