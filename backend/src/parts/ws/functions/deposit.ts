@@ -44,13 +44,13 @@ export async function deposit() {
 		},
 	});
 
-	// Find a websocket from the storage system
+	// Find all available websocket APs from the storage system
 	const systemAps = aps[storageSystemId] || {};
-	const apName = Object.keys(systemAps).find(
+	const apNames = Object.keys(systemAps).filter(
 		(key) => systemAps[key]?.readyState === ws.OPEN && key.includes('turtle'),
 	);
 
-	if (!apName) {
+	if (apNames.length === 0) {
 		console.error(chalk.red('No connected clients, unable to deposit'));
 		isDepositing = false;
 		return;
@@ -61,8 +61,6 @@ export async function deposit() {
 	await Promise.all(
 		barrelsWithItems.map(async (barrel) => {
 			for (const item of barrel.Item) {
-				if (!apName) continue;
-
 				const storagePossibilities = await getItemStoragePossibilities(
 					item.inGameId,
 				);
@@ -88,18 +86,35 @@ export async function deposit() {
 
 	console.info(chalk.green('Depositing'), `${moveables.length} items`);
 
-	const msg = await sendMessageToAp(
-		storageSystemId,
-		apName,
-		generateMoveItemsBetweenContainers(moveables),
+	// Split moveables evenly among available APs
+	const chunkSize = Math.ceil(moveables.length / apNames.length);
+	const moveableChunks: MoveableEntry[][] = [];
+	for (let i = 0; i < moveables.length; i += chunkSize) {
+		moveableChunks.push(moveables.slice(i, i + chunkSize));
+	}
+
+	const results = await Promise.all(
+		moveableChunks.map((chunk, idx) => {
+			const apName = apNames[idx % apNames.length];
+			return sendMessageToAp(
+				storageSystemId,
+				apName!,
+				generateMoveItemsBetweenContainers(chunk),
+			);
+		}),
 	);
-	console.info(msg);
 
 	const end = Date.now();
 
-	let [confirmation, count] = msg.split(' ') as any[];
-	if (confirmation === 'TRANSFERRED') count = Number(count);
+	let totalCount = 0;
+	for (const msg of results) {
+		let [confirmation, count] = msg.split(' ') as any[];
+		if (confirmation === 'TRANSFERRED') totalCount += Number(count);
+	}
 
-	console.info(chalk.green('Deposit'), `${count} items in ${end - start}ms`);
+	console.info(
+		chalk.green('Deposit'),
+		`${totalCount} items in ${end - start}ms`,
+	);
 	isDepositing = false;
 }

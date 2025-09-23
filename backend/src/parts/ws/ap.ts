@@ -9,50 +9,58 @@ export const aps: {
 	};
 } = {};
 
+type QueueEntry = {
+	queue: ApMessage[];
+	interval?: NodeJS.Timeout;
+};
+
+const apQueues: {
+	[storageSystemId: string]: {
+		[inGameId: string]: QueueEntry;
+	};
+} = {};
+
 export function setAccessPoint(
 	storageSystemId: string,
 	inGameId: string,
 	ws: WebSocket | null,
 ) {
 	if (!aps[storageSystemId]) aps[storageSystemId] = {};
-	if (aps[storageSystemId]) aps[storageSystemId]![inGameId] = ws;
+	aps[storageSystemId][inGameId] = ws;
 }
 
-export let pendingMessages: ApMessage[] = [];
-let globalInterval: NodeJS.Timeout;
+function processQueue(storageSystemId: string, inGameId: string) {
+	const queueEntry = apQueues[storageSystemId]?.[inGameId];
+	if (!queueEntry) return;
 
-function checkInterval() {
-	if (globalInterval) return;
-
-	pendingMessages = pendingMessages.filter((m) => !m.acknowledged);
-
-	const message = pendingMessages[0];
-	if (!message) return;
-	const ws = aps[message.storageSystemId]?.[message.receiver];
+	const ws = aps[storageSystemId]?.[inGameId];
 	if (!ws) {
-		console.error(
-			'No websocket found for',
-			message.storageSystemId,
-			message.receiver,
-		);
+		console.error('No websocket found for', storageSystemId, inGameId);
 		return;
 	}
-	ws.send(message.message);
 
-	globalInterval = setInterval(() => {
-		const message = pendingMessages[0];
+	const sendNext = () => {
+		const message = queueEntry.queue[0];
 		if (!message) {
-			clearInterval(globalInterval);
-			globalInterval = undefined!;
+			clearInterval(queueEntry.interval);
+			queueEntry.interval = undefined;
+			return;
 		}
-		if (!message) return;
-		message.retries++;
+		if (message.acknowledged) {
+			queueEntry.queue.shift();
+			sendNext();
+			return;
+		}
 		if (message.retries > 10) {
 			console.error(
 				chalk.red('Unable to send message to AP: ' + message.message),
 			);
 			message.acknowledge('Failed to reach AP');
-		} else {
+			queueEntry.queue.shift();
+			sendNext();
+			return;
+		}
+		if (message.retries > 0) {
 			console.warn(
 				chalk.bgYellow('Retrying'),
 				`Retrying message ${chalk.bgYellow(
@@ -60,9 +68,15 @@ function checkInterval() {
 				)} to ${message.receiver}`,
 				chalk.red(`(${message.retries})`),
 			);
-			ws.send(message.message);
 		}
-	}, 1500);
+		ws.send(message.message);
+		message.retries++;
+	};
+
+	if (!queueEntry.interval) {
+		sendNext();
+		queueEntry.interval = setInterval(sendNext, 1500);
+	}
 }
 
 export function sendMessageToAp(
@@ -73,34 +87,41 @@ export function sendMessageToAp(
 	return new Promise<string>((resolve, reject) => {
 		const id = randomUUID();
 		const ws = aps[storageSystemId]?.[inGameId];
-		if (ws) {
-			const msg = `${id}\n${message}`;
-
-			pendingMessages.push({
-				acknowledged: false,
-				message: msg,
-				id,
-				receiver: inGameId,
-				retries: 0,
-				storageSystemId,
-				acknowledge: (msg: string) => {
-					const inArray = pendingMessages.find((m) => m.id === id);
-					inArray!.acknowledged = true;
-
-					pendingMessages = pendingMessages.filter((m) => m.id !== id);
-
-					clearInterval(globalInterval);
-					globalInterval = undefined!;
-
-					checkInterval();
-					resolve(msg);
-				},
-			});
-
-			checkInterval();
-		} else {
+		if (!ws) {
 			console.error('No websocket found for', storageSystemId, inGameId);
 			reject();
+			return;
 		}
+
+		if (!apQueues[storageSystemId]) apQueues[storageSystemId] = {};
+		if (!apQueues[storageSystemId][inGameId]) {
+			apQueues[storageSystemId][inGameId] = { queue: [] };
+		}
+		const queueEntry = apQueues[storageSystemId][inGameId];
+
+		const msg = `${id}\n${message}`;
+		const apMsg: ApMessage = {
+			acknowledged: false,
+			message: msg,
+			id,
+			receiver: inGameId,
+			retries: 0,
+			storageSystemId,
+			acknowledge: (msg: string) => {
+				const idx = queueEntry.queue.findIndex((m) => m.id === id);
+				if (idx !== -1) {
+					queueEntry.queue[idx].acknowledged = true;
+					queueEntry.queue.splice(idx, 1);
+				}
+				if (queueEntry.queue.length === 0 && queueEntry.interval) {
+					clearInterval(queueEntry.interval);
+					queueEntry.interval = undefined;
+				}
+				resolve(msg);
+			},
+		};
+
+		queueEntry.queue.push(apMsg);
+		processQueue(storageSystemId, inGameId);
 	});
 }
