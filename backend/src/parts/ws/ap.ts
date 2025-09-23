@@ -14,7 +14,7 @@ type QueueEntry = {
 	interval?: NodeJS.Timeout;
 };
 
-const apQueues: {
+export const apQueues: {
 	[storageSystemId: string]: {
 		[inGameId: string]: QueueEntry;
 	};

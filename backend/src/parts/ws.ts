@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { parseWebsocketMessage } from './ws/utils';
 import { handleMessage } from './ws/handleMessage';
-import { pendingMessages, setAccessPoint } from './ws/ap';
+import { apQueues, setAccessPoint } from './ws/ap';
 import { prisma } from '.';
 import { randomUUID } from 'crypto';
 import chalk from 'chalk';
@@ -86,7 +86,9 @@ wss.on('connection', (ws) => {
 
 					const id = lines[0]?.split(' ')[1]?.trim();
 					const message = lines.slice(1).join('\n');
-					const pendingMsg = pendingMessages.find((m) => m.id === id);
+					const pendingMsg = (
+						apQueues[parsed?.storageSystemId]?.[parsed?.computer]?.queue || []
+					).find((m) => m.id === id);
 					console.warn(
 						chalk.bgGreenBright('Message acknowleged: '),
 						message,
