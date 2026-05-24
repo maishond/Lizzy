@@ -29,6 +29,9 @@ local urls = {
     engine4 = baseUrl .. '/engine4.lua',
     mods = baseUrl .. '/mods.lua',
     calibrate = baseUrl .. '/calibrate.lua',
+    reset = baseUrl .. '/reset.lua',
+    monitor = baseUrl .. '/monitor.lua',
+    utils = baseUrl .. '/utils.lua',
 }
 
 -- Loop over urls

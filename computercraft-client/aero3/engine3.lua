@@ -1,3 +1,4 @@
+require 'utils'
 -- Write baseUrl to file
 local file = fs.open('startup-override.lua', 'w')
 file.write("require('update')\nrequire('engine3')")
@@ -12,8 +13,12 @@ while true do
 	repeat
 		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 	until channel == c
-	print(message)
-	redstone.setAnalogOutput('bottom', tonumber(message))
+	spl = split(message, ' ')
+	power = spl[1]
+	inverted = spl[2]
+	print(inverted)
+	redstone.setOutput('back', inverted == 'true')
+	redstone.setAnalogOutput('bottom', tonumber(power))
 
 	::continue::
 end
