@@ -2,13 +2,13 @@ function getHostName()
     print('Getting hostname from master')
     -- Request hostname through rednet
     peripheral.find("modem", rednet.open)
-    return 'lizzy.jipfr.nl/aero3'
+    return 'lizzy.jipfr.nl/aero4'
 end
 
 local isMasterComputer = fs.exists('is-master.txt')
 local onDeviceHostName = fs.exists('hostname.txt') and fs.open('hostname.txt', 'r').readLine() or nil
 print('Is master: ' .. tostring(isMasterComputer))
-local hostNameValue = 'lizzy.jipfr.nl/aero3/'
+local hostNameValue = 'lizzy.jipfr.nl/aero4/'
 local hostName = isMasterComputer and (onDeviceHostName or hostNameValue) or getHostName()
 local baseUrl = 'https://' .. hostName
 
@@ -23,14 +23,8 @@ local urls = {
     master = baseUrl .. '/master.lua',
     point2 = baseUrl .. '/point2.lua',
     point3 = baseUrl .. '/point3.lua',
-    engine1 = baseUrl .. '/engine1.lua',
-    engine2 = baseUrl .. '/engine2.lua',
-    engine3 = baseUrl .. '/engine3.lua',
-    engine4 = baseUrl .. '/engine4.lua',
     mods = baseUrl .. '/mods.lua',
-    calibrate = baseUrl .. '/calibrate.lua',
     reset = baseUrl .. '/reset.lua',
-    monitor = baseUrl .. '/monitor.lua',
     utils = baseUrl .. '/utils.lua',
 }
 

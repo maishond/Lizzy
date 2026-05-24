@@ -5,7 +5,7 @@ file.close()
 
 print('hi2')
 
-modem = peripheral.wrap('front')
+modem = peripheral.find('modem')
 
 while true do
 	x, y, z = gps.locate(0.1)

@@ -1,28 +1,11 @@
 local modem = peripheral.wrap("front")
 
-require 'utils'
+require 'mods'
 
-local function set_fl(l)
-    modem.transmit(43, 0, 15 - l)
-end
-
-local function set_fr(l)
-    modem.transmit(44, 0, 15 - l)
-end
-
-local function set_rr(l)
-    modem.transmit(45, 0, 15 - l)
-end
-
-local function set_rl(l)
-    modem.transmit(46, 0, 15 - l)
-end
-
-
-set_fl(0)
-set_fr(0)
-set_rr(0)
-set_rl(0)
+set_front(2)
+set_rear(2)
+set_left(2)
+set_right(2)
 
 -- while true do
 --     x, y, z = get_state()

@@ -62,9 +62,10 @@ function get_state()
 		local p2_x_diff = p2_x - x
 		local p2_y_diff = p2_y - y
 		local p2_z_diff = p2_z - z
-		local p3_dx = p3_x - p2_x
-		local p3_dy = p3_y - p2_y
-		local p3_dz = p3_z - p2_z
+
+		local p3_dx = p3_x - x
+		local p3_dy = p3_y - y
+		local p3_dz = p3_z - z
 
 
 		-- ! Pitch
