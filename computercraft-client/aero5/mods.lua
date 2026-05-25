@@ -1,80 +1,83 @@
 require 'utils'
-local modem = peripheral.find("modem")
+local modem = peripheral.wrap("back")
 modem.open(42)
 modem.open(41)
 
-function set_front(power_level)
-	if power_level == 0 then power_level = 15 end
-	redstone.setAnalogOutput('front', power_level)
+function angle_diff(current, target)
+    local diff = (target - current + 180) % 360 - 180
+    return diff
 end
-
-function set_rear(power_level)
-	if power_level == 0 then power_level = 15 end
-	redstone.setAnalogOutput('back', power_level)
-end
-
-function set_right(power_level)
-	if power_level == 0 then power_level = 15 end
-	redstone.setAnalogOutput('left', power_level)
-end
-
-function set_left(power_level)
-	if power_level == 0 then power_level = 15 end
-	redstone.setAnalogOutput('right', power_level)
-end
-
-function stabilise_at(px, py, pz, ppitch, pyaw, proll)
+l = 0
+function stabilise_at(px, py, pz)
+	last_yaw_adjust = 0
 	while true do
 		x, y, z, pitch, yaw, roll = get_state()
-		-- print(x, y, z)
-		print('Current P/Y/R:', pitch, yaw, roll)
 		if x then
 			x_diff = x - px
 			y_diff = y - py
 			z_diff = z - pz
-			-- print(x_diff, z_diff)
-			pitch_diff = pitch - ppitch
-			yaw_diff = yaw - pyaw
-			roll_diff = roll - proll
 
-			MAX_CORRECT_STRENGTH = 4
-			BASE_STRENGTH = 10
+			destination_angle = math.deg(math.atan2(z_diff, x_diff)) + 90
+			yaw_error = angle_diff(destination_angle, yaw)
 
-			DIV_ROLL = 5
-			DIV_PITCH = 5
-			DIV_Y = 5
+			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
 
-			-- ! Correct roll
-			roll_power = math.floor(clamp(0, math.abs(roll_diff / DIV_ROLL) * MAX_CORRECT_STRENGTH, MAX_CORRECT_STRENGTH) + 0.5)
-			if roll_diff < 0 then roll_power = -roll_power end
+			dist_multiplier = clamp(0, hor_dist / 200, 1)
+			power_level = clamp(0, (math.abs(yaw_error ^ 3) / 5), 3) * dist_multiplier
 
-			-- ! Correct pitch
-			pitch_power = math.floor(clamp(0, math.abs(pitch_diff / DIV_PITCH) * MAX_CORRECT_STRENGTH, MAX_CORRECT_STRENGTH) + 0.5)
-			if pitch_diff < 0 then pitch_power = -pitch_power end
+			print('Yaw_err:      ', math.floor(yaw_error))
+			print('Navigating to:', px, pz)
+			print('Current X/Z:  ', math.floor(x), math.floor(z))
+			print('Pow yaw:      ', math.floor(power_level))
+			print('Dist_mult:    ', dist_multiplier)
+			print('Distance:     ', hor_dist)
+			print('----')
 
-			-- ! Correct Y
-			-- y_diff = -y_diff
-			y_power = math.floor(clamp(0, math.abs(y_diff / DIV_Y) * 2, 2) + 0.5)
-			if y_diff < 0 then y_power = -y_power end
-			if math.abs(pitch_diff) + math.abs(roll_diff) > 20 then
-				y_diff = 0
-			end -- Let it stabilise first
-
-			print('Roll, pitch, y power:', roll_power, pitch_power, y_power)
+			POWER_OFF = 15
 			
-			-- ! Calculate propellor strength
-			front = BASE_STRENGTH - pitch_power + y_power
-			rear = BASE_STRENGTH + pitch_power + y_power
-			left = BASE_STRENGTH + roll_power + y_power
-			right = BASE_STRENGTH - roll_power + y_power
+			if hor_dist > 5 then
+				redstone.setAnalogOutput('front', 0)
+				l = 0
+				r = 0
+				f = 0
+				if hor_dist < 68 then
+					l = 15
+					r = 15
+				elseif yaw_error > 5 then
+					-- Turn right
+					r = power_level
+					
+					-- sleep(0.05)
+					-- redstone.setAnalogOutput('right', 0)
+					-- sleep(0.3)
+					last_yaw_adjust = os.time('local')
+				elseif yaw_error < -5 then
+					-- Turn left
+					l = power_level
+					-- sleep(0.05)
+					-- redstone.setAnalogOutput('left', 0)
+					-- sleep(0.3)
+					last_yaw_adjust = os.time('local')
+				else
+					local now = os.time('local')
+					local seconds_since_last_yaw_adjust = (60 * (now - last_yaw_adjust)) * 60 -- to seconds
 
-			-- ! Determine directions
-			MAX = 8
-			set_front(clamp(0, front, MAX))
-			set_rear(clamp(0, rear, MAX))
-
-			set_right(clamp(0, right, MAX))
-			set_left(clamp(0, left, MAX))
+					if seconds_since_last_yaw_adjust > 2 or true then
+						local speed = clamp(0, 14 * dist_multiplier, 14)
+						-- ! Go forward
+						-- redstone.setAnalogOutput('left', 0)
+						-- redstone.setAnalogOutput('right', 0)
+						f = speed
+					end
+				end
+				redstone.setAnalogOutput('right', r)
+				redstone.setAnalogOutput('left', l)
+				redstone.setAnalogOutput('front', f)
+			else
+				redstone.setAnalogOutput('left', 15)
+				redstone.setAnalogOutput('right', 15)
+				redstone.setAnalogOutput('front', 0)
+			end
 		end
 	end
 end

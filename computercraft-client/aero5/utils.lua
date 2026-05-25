@@ -32,6 +32,10 @@ function get_state()
 	-- ! Get P2 pos (rear)
     local event, side, channel, replyChannel, message, distance
 
+	modem = peripheral.wrap('back')
+	modem.open(42)
+	modem.open(41)
+
     repeat
         event, side, channel, replyChannel, message, distance =
             os.pullEvent("modem_message")
@@ -67,6 +71,8 @@ function get_state()
 		local p3_dy = p3_y - y
 		local p3_dz = p3_z - z
 
+		print('--', x - l)
+		l = x
 
 		-- ! Pitch
 		local horizontal_pitch = math.sqrt(p2_x_diff * p2_x_diff + p2_z_diff * p2_z_diff)
@@ -74,6 +80,8 @@ function get_state()
 
 
 		-- ! Yaw
+		-- print(math.floor(x), math.floor(y), math.floor(z))
+		-- print(math.floor(p2_x), math.floor(p2_y), math.floor(p2_z))
 		local yaw = 360 - (180 + math.atan2(p2_x_diff, p2_z_diff) * 180 / math.pi)
 		while yaw < 0 do
 			yaw = yaw + 360
