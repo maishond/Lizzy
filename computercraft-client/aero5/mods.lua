@@ -58,7 +58,7 @@ function stabilise_at(px, py, pz)
 				local output = 0.3 * yaw_error - 2 * yaw_velocity
 				
 				power_level = clamp(1, math.abs(yaw_error) / 3, 2)
-				BASE_POWER = 6.5
+				BASE_POWER = 7
 
 				if output > 1 then
 					r = BASE_POWER + power_level
@@ -84,7 +84,7 @@ function stabilise_at(px, py, pz)
 				-- Switch to small props!
 				-- Once those exist, lol
 			end
+			print('----')
 		end
-		print('----')
 	end
 end

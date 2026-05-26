@@ -71,6 +71,12 @@ function get_state()
 		local p3_y_diff = p3_y - y
 		local p3_z_diff = p3_z - z
 
+		-- ! Try seeing if the relative coordinates are even possible
+		p2_dist = math.sqrt(p2_x_diff ^ 2 + p2_z_diff ^ 2)
+		if p2_dist > 8 then
+			return nil
+		end
+
 		-- ! Pitch
 		local horizontal_pitch = math.sqrt(p2_x_diff * p2_x_diff + p2_z_diff * p2_z_diff)
 		local pitch = math.atan2(p2_y_diff, horizontal_pitch) * 180 / math.pi
