@@ -24,20 +24,18 @@ function stabilise_at(px, py, pz)
 
 			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
 
-			dist_multiplier = clamp(0, hor_dist / 200, 1)
-			power_level = clamp(0, (math.abs(yaw_error ^ 3) / 5), 3) * dist_multiplier
+			dist_multiplier = clamp(0, hor_dist / 500, 1)
 
 			print('Yaw_err:      ', math.floor(yaw_error))
 			print('Navigating to:', px, pz)
 			print('Current X/Z:  ', math.floor(x), math.floor(z))
-			print('Pow yaw:      ', math.floor(power_level))
 			print('Dist_mult:    ', dist_multiplier)
 			print('Distance:     ', hor_dist)
-			print('----')
+			
 
 			POWER_OFF = 15
 			
-			if hor_dist > 5 then
+			if hor_dist > 5 and dist_multiplier > 0.2 then
 				
 				l = 15
 				r = 15
@@ -57,10 +55,9 @@ function stabilise_at(px, py, pz)
 				last_yaw = yaw
 
 				-- ! Lol
-				local output = 0.3 * yaw_error - 4 * yaw_velocity
+				local output = 0.3 * yaw_error - 2 * yaw_velocity
 				
-				power_level = clamp(1, math.abs(yaw_error) / 20, 2)
-
+				power_level = clamp(1, math.abs(yaw_error) / 3, 2)
 				BASE_POWER = 6.5
 
 				if output > 1 then
@@ -75,14 +72,19 @@ function stabilise_at(px, py, pz)
 				end
 
 				-- ! Write output
-				redstone.setAnalogOutput('right', clamp(0, r, 15))
-				redstone.setAnalogOutput('left', clamp(0, l, 15))
-				redstone.setAnalogOutput('front', clamp(0, f, 15))
+				redstone.setAnalogOutput('right', clamp(0, r * dist_multiplier, 15))
+				redstone.setAnalogOutput('left', clamp(0, l * dist_multiplier, 15))
+				redstone.setAnalogOutput('front', clamp(0, f * dist_multiplier, 15))
 			else
+				-- Disable big props
 				redstone.setAnalogOutput('left', 15)
 				redstone.setAnalogOutput('right', 15)
 				redstone.setAnalogOutput('front', 0)
+
+				-- Switch to small props!
+				-- Once those exist, lol
 			end
 		end
+		print('----')
 	end
 end

@@ -41,7 +41,7 @@ while true do
 	local x, y, z = mean_gps_locate(8, 0.02)
 
 	if x and y and z then
-		print(x, y, z)
+		print(math.floor(x), math.floor(y), math.floor(z))
 		modem.transmit(41, 2, string.format('%s %s %s', x, y, z))
 	end
 
