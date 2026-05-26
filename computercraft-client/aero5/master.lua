@@ -2,6 +2,9 @@
 local file = fs.open("startup-override.lua", "w")
 file.write("require('update')\nrequire('master')")
 file.close()
+
+last_yaw = 0
+
 require 'mods'
 
 print("Flight controller starting...")
@@ -14,4 +17,4 @@ modem.open(41) -- p3 (right)
 
 -- ! Main loop
 print('Go')
-stabilise_at(0, 78, 0, 0, 0, 0)
+stabilise_at(100000, 78, 0, 0, 0, 0)

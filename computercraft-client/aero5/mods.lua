@@ -7,7 +7,9 @@ function angle_diff(current, target)
     local diff = (target - current + 180) % 360 - 180
     return diff
 end
-l = 0
+
+yaw_velocity_history = {}
+
 function stabilise_at(px, py, pz)
 	last_yaw_adjust = 0
 	while true do
@@ -36,43 +38,46 @@ function stabilise_at(px, py, pz)
 			POWER_OFF = 15
 			
 			if hor_dist > 5 then
-				redstone.setAnalogOutput('front', 0)
-				l = 0
-				r = 0
+				
+				l = 15
+				r = 15
 				f = 0
-				if hor_dist < 68 then
-					l = 15
-					r = 15
-				elseif yaw_error > 5 then
-					-- Turn right
-					r = power_level
-					
-					-- sleep(0.05)
-					-- redstone.setAnalogOutput('right', 0)
-					-- sleep(0.3)
-					last_yaw_adjust = os.time('local')
-				elseif yaw_error < -5 then
-					-- Turn left
-					l = power_level
-					-- sleep(0.05)
-					-- redstone.setAnalogOutput('left', 0)
-					-- sleep(0.3)
-					last_yaw_adjust = os.time('local')
-				else
-					local now = os.time('local')
-					local seconds_since_last_yaw_adjust = (60 * (now - last_yaw_adjust)) * 60 -- to seconds
 
-					if seconds_since_last_yaw_adjust > 2 or true then
-						local speed = clamp(0, 14 * dist_multiplier, 14)
-						-- ! Go forward
-						-- redstone.setAnalogOutput('left', 0)
-						-- redstone.setAnalogOutput('right', 0)
-						f = speed
-					end
+				table.insert(yaw_velocity_history, 1, last_yaw - yaw)
+				yaw_velocity_history[10] = nil
+
+				yaw_avg = 0
+				for i=1,#yaw_velocity_history do
+					yaw_avg = yaw_avg + yaw_velocity_history[i]
 				end
-				redstone.setAnalogOutput('right', r)
-				redstone.setAnalogOutput('left', l)
-				redstone.setAnalogOutput('front', f)
+				yaw_avg = yaw_avg / #yaw_velocity_history
+				-- yaw_velocity = yaw_avg
+				yaw_velocity = last_yaw - yaw
+
+				last_yaw = yaw
+
+				-- ! Lol
+				local output = 0.3 * yaw_error - 4 * yaw_velocity
+				
+				power_level = clamp(1, math.abs(yaw_error) / 20, 2)
+
+				BASE_POWER = 6.5
+
+				if output > 1 then
+					r = BASE_POWER + power_level
+					l = BASE_POWER
+				elseif output < -1 then
+					r = BASE_POWER
+					l = BASE_POWER + power_level
+				else
+					l = BASE_POWER
+					r = BASE_POWER
+				end
+
+				-- ! Write output
+				redstone.setAnalogOutput('right', clamp(0, r, 15))
+				redstone.setAnalogOutput('left', clamp(0, l, 15))
+				redstone.setAnalogOutput('front', clamp(0, f, 15))
 			else
 				redstone.setAnalogOutput('left', 15)
 				redstone.setAnalogOutput('right', 15)

@@ -71,9 +71,6 @@ function get_state()
 		local p3_dy = p3_y - y
 		local p3_dz = p3_z - z
 
-		print('--', x - l)
-		l = x
-
 		-- ! Pitch
 		local horizontal_pitch = math.sqrt(p2_x_diff * p2_x_diff + p2_z_diff * p2_z_diff)
 		local pitch = math.atan2(p2_y_diff, horizontal_pitch) * 180 / math.pi
