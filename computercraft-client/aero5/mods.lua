@@ -32,10 +32,9 @@ function stabilise_at(px, py, pz)
 			print('Dist_mult:    ', dist_multiplier)
 			print('Distance:     ', hor_dist)
 			
-
 			POWER_OFF = 15
 			
-			if hor_dist > 5 and dist_multiplier > 0.2 then
+			if hor_dist > 200 then
 				
 				l = 15
 				r = 15
@@ -57,7 +56,7 @@ function stabilise_at(px, py, pz)
 				-- ! Lol
 				local output = 0.3 * yaw_error - 2 * yaw_velocity
 				
-				power_level = clamp(1, math.abs(yaw_error) / 3, 2)
+				power_level = clamp(1, math.abs(yaw_error) / 3, 1)
 				BASE_POWER = 7
 
 				if output > 1 then
@@ -80,10 +79,16 @@ function stabilise_at(px, py, pz)
 				redstone.setAnalogOutput('left', 15)
 				redstone.setAnalogOutput('right', 15)
 				redstone.setAnalogOutput('front', 0)
-
-				-- Switch to small props!
-				-- Once those exist, lol
 			end
+
+			print('hor_dist', hor_dist)
+			if hor_dist > 4 then
+				modem.transmit(43, 0, yaw_error)
+			else
+				print('-400')
+				modem.transmit(43, 0, -400)
+			end
+
 			print('----')
 		end
 	end

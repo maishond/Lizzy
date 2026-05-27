@@ -5,8 +5,9 @@ file.close()
 
 
 -- ! Ports docs
--- ! 42 is point 2 (back)
--- ! 41 is point 3 (side)
+-- ! 42 is point 2 XYZ (back)
+-- ! 41 is point 3 XYZ (side)
+-- ! 43 is yaw_error (emitted by master computer)
 ------------
 
 last_yaw = 0
@@ -24,8 +25,14 @@ modem.open(41) -- p3 (side)
 -- ! Main loop
 print('Go')
 
-stabilise_at(999999999, 0, 0, 0, 0, 0)
+thou = 1000
+-- stabilise_at(50 * thou, 0, 0, 0, 0, 0)
+
+-- stabilise_at(-349, 95, -188, 0, 0, 0) -- wouter airstrip
+-- stabilise_at(-348, 136, 2, 0, 0, 0) -- wouter huis
+stabilise_at(-1686, 78, -186, 0, 0, 0) -- casper
 
 -- stabilise_at(0, 0, 0, 0, 0, 0)
 -- stabilise_at(2500, 0, 2500, 0, 0, 0)
 -- stabilise_at(-1000, 0, 0, 0, 0, 0)
+-- stabilise_at(5000, 0, 0, 0, 0, 0)

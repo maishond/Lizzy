@@ -26,6 +26,7 @@ local urls = {
     mods = baseUrl .. '/mods.lua',
     reset = baseUrl .. '/reset.lua',
     utils = baseUrl .. '/utils.lua',
+    yawprop = baseUrl .. '/yawprop.lua',
 }
 
 -- Loop over urls
