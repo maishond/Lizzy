@@ -10,9 +10,11 @@ file.close()
 -- ! 43 is yaw_error (emitted by master computer)
 ------------
 
-last_yaw = 0
-
 require 'mods'
+
+redstone.setAnalogOutput('left', 15)
+redstone.setAnalogOutput('right', 15)
+redstone.setAnalogOutput('front', 15)
 
 print("Flight controller starting...")
 
@@ -23,16 +25,29 @@ modem.open(41) -- p3 (side)
 
 
 -- ! Main loop
-print('Go')
+print('Main initialised')
 
-thou = 1000
+-- thou = 1000
 -- stabilise_at(50 * thou, 0, 0, 0, 0, 0)
 
--- stabilise_at(-349, 95, -188, 0, 0, 0) -- wouter airstrip
+-- stabilise_at(-283, 95, -177, 0, 0, 0) -- wouter airstrip
 -- stabilise_at(-348, 136, 2, 0, 0, 0) -- wouter huis
-stabilise_at(-1686, 78, -186, 0, 0, 0) -- casper
+-- stabilise_at(-1686, 78, -186, 0, 0, 0) -- casper
+-- stabilise_at(-608, 42, 2034, 0, 0, 0) -- ocean
+-- stabilise_at(-1258, 69, -2934, 0, 0, 0) -- NEW airport
 
 -- stabilise_at(0, 0, 0, 0, 0, 0)
+-- stabilise_at(299, 0, 2286, 0, 0, 0)
 -- stabilise_at(2500, 0, 2500, 0, 0, 0)
 -- stabilise_at(-1000, 0, 0, 0, 0, 0)
 -- stabilise_at(5000, 0, 0, 0, 0, 0)
+
+b = 40000
+-- stab ilise_at(0, 0, 0, 0, 0, 0)
+-- stabilise_at(b, 0, 0, 0, 0, 0)
+-- stabilise_at(b, 0, b, 0, 0, 0)
+-- stabilise_at(-b, 0, b, 0, 0, 0)
+-- stabilise_at(-b, 0, -b, 0, 0, 0)
+-- stabilise_at(-b, 0, b, 0, 0, 0)
+-- stabilise_at(b, 0, 0, 0, 0, 0)x
+-- stabilise_at(-348, 136, 2, 0, 0, 0) -- wouter huis

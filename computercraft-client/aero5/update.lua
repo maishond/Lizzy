@@ -18,15 +18,20 @@ file.write(hostName)
 file.close()
 
 local urls = {
-    update = baseUrl .. '/update.lua',
-    startup = baseUrl .. '/startup.lua',
-    master = baseUrl .. '/master.lua',
-    point2 = baseUrl .. '/point2.lua',
-    point3 = baseUrl .. '/point3.lua',
-    mods = baseUrl .. '/mods.lua',
-    reset = baseUrl .. '/reset.lua',
-    utils = baseUrl .. '/utils.lua',
-    yawprop = baseUrl .. '/yawprop.lua',
+    ['update.lua'] = baseUrl .. '/update.lua',
+    ['startup.lua'] = baseUrl .. '/startup.lua',
+    ['master.lua'] = baseUrl .. '/master.lua',
+    ['point2.lua'] = baseUrl .. '/point2.lua',
+    ['point3.lua'] = baseUrl .. '/point3.lua',
+    ['mods.lua'] = baseUrl .. '/mods.lua',
+    ['reset.lua'] = baseUrl .. '/reset.lua',
+    ['utils.lua'] = baseUrl .. '/utils.lua',
+    ['yawprop.lua'] = baseUrl .. '/yawprop.lua',
+    ['forward.lua'] = baseUrl .. '/forward.lua',
+    ['landing.dfpwm'] = baseUrl .. '/landing.dfpwm',
+    ['goto.lua'] = baseUrl .. '/goto.lua',
+    ['crashed.lua'] = baseUrl .. '/crashed.lua',
+    ['hover.lua'] = baseUrl .. '/hover.lua',
 }
 
 -- Loop over urls
@@ -39,10 +44,10 @@ for key, url in pairs(urls) do
         local responseText = response.readAll()
 
         -- Write to file
-        local file = fs.open(key .. '.lua', 'w')
+        local file = fs.open(key, 'w')
         file.write(responseText)
         file.close()
-        print('Saved ' .. key .. '.lua')
+        print('Saved ' .. key)
 
         -- Close response
         response.close()
