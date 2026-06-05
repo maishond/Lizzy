@@ -34,6 +34,7 @@ function take_off()
 end
 
 function stabilise_at(px, pz)
+	redstone.setAnalogOutput('front', 14)
 	last_yaw_adjust = 0
 	while true do
 		x, y, z, pitch, yaw, roll = get_state()
@@ -128,13 +129,14 @@ function land()
 		redstone.setAnalogOutput('front', 14-i)
 		sleep(9)
 	end
-	LOW_POWER = 9
+	LOW_POWER = 5
 	redstone.setAnalogOutput('front', LOW_POWER)
 	print('Set power to', LOW_POWER)
 	print('Landed. Maybe upside down? I\'m a computer, how should I know')
 end
 
 function play_warning() 
+	-- return nil
 	print('playing warning')
 	local speaker = peripheral.find("speaker")
 	local dfpwm = require("cc.audio.dfpwm")

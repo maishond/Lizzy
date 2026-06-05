@@ -1,21 +1,5 @@
-function getHostName()
-    print('Getting hostname from master')
-    -- Request hostname through rednet
-    peripheral.find("modem", rednet.open)
-    return 'lizzy.jipfr.nl/aero5'
-end
-
-local isMasterComputer = fs.exists('is-master.txt')
-local onDeviceHostName = fs.exists('hostname.txt') and fs.open('hostname.txt', 'r').readLine() or nil
-print('Is master: ' .. tostring(isMasterComputer))
-local hostNameValue = 'lizzy.jipfr.nl/aero5/'
-local hostName = isMasterComputer and (onDeviceHostName or hostNameValue) or getHostName()
+local hostName = 'lizzy.jipfr.nl/aero5'
 local baseUrl = 'https://' .. hostName
-
--- Write baseUrl to file
-local file = fs.open('hostname.txt', 'w')
-file.write(hostName)
-file.close()
 
 local urls = {
     ['update.lua'] = baseUrl .. '/update.lua',
@@ -32,11 +16,13 @@ local urls = {
     ['goto.lua'] = baseUrl .. '/goto.lua',
     ['crashed.lua'] = baseUrl .. '/crashed.lua',
     ['hover.lua'] = baseUrl .. '/hover.lua',
+    ['portable-radar.lua'] = baseUrl .. '/portable-radar.lua',
 }
 
 -- Loop over urls
 for key, url in pairs(urls) do
     -- Get response
+    print('G', url)
     local response = http.get(url)
 
     if response ~= nil then

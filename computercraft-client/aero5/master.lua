@@ -42,12 +42,12 @@ print('Main initialised')
 -- stabilise_at(-1000, 0, 0, 0, 0, 0)
 -- stabilise_at(5000, 0, 0, 0, 0, 0)
 
-b = 40000
--- stab ilise_at(0, 0, 0, 0, 0, 0)
--- stabilise_at(b, 0, 0, 0, 0, 0)
--- stabilise_at(b, 0, b, 0, 0, 0)
--- stabilise_at(-b, 0, b, 0, 0, 0)
--- stabilise_at(-b, 0, -b, 0, 0, 0)
--- stabilise_at(-b, 0, b, 0, 0, 0)
--- stabilise_at(b, 0, 0, 0, 0, 0)x
--- stabilise_at(-348, 136, 2, 0, 0, 0) -- wouter huis
+b = 30000
+-- stabilise_at(0, 0)
+-- stabilise_at(b, 0)
+-- stabilise_at(b, b)
+-- stabilise_at(-b, b)
+-- stabilise_at(-b, -b)
+-- stabilise_at(b, -b)
+-- stabilise_at(b, 0)
+-- stabilise_at(-348, 2) -- wouter huis
