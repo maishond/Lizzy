@@ -34,7 +34,7 @@ end
 
 print('hi3')
 
-local modem = peripheral.wrap('right')
+local modem = peripheral.wrap('back')
 
 while true do
 	-- ! Mean GPS position

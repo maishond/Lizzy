@@ -14,141 +14,135 @@ last_yaw = 0
 
 
 function take_off() 
-	redstone.setAnalogOutput('left', 15)
-	redstone.setAnalogOutput('right', 15)
-	print('Taking off')
-	for i=1,4 do
-		print('Set power to', 10+i)
-		redstone.setAnalogOutput('front', 10+i)
-		sleep(7)
-	end
-	while true do
-		x, y, z = get_state()
-		if y and y > 290 then
-			print('Y >= 290 passed! Time to let it stabilise for a bit')
-			sleep(15)
-			break
-		end
-	end
-	print('Take-off complete!')
+	print('take_off')
+end
+
+motors = {
+	N_MOTOR = 'front',
+	E_MOTOR = 'right',
+	S_MOTOR = 'top',
+	W_MOTOR = 'left',
+}
+function set_power(name, power)
+	redstone.setAnalogOutput(motors[name], 15 - power)
 end
 
 function stabilise_at(px, pz)
-	redstone.setAnalogOutput('front', 14)
-	last_yaw_adjust = 0
+	print('stabilise_at')
 	while true do
 		x, y, z, pitch, yaw, roll = get_state()
 		if x then
-			x_diff = x - px
-			z_diff = z - pz
 
-			destination_angle = math.deg(math.atan2(z_diff, x_diff)) + 90
-			yaw_error = angle_diff(destination_angle, yaw)
+			-- x_diff = x - px
+			-- z_diff = z - pz
 
-			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
+			-- dist_from_target = math.sqrt(math.abs(x_diff) ^ 2 + math.abs(z_diff) ^ 2)
+			-- target_angle = math.deg(math.atan2(x_diff, z_diff))
 
-			print(last_yaw)
-			dist_multiplier = clamp(0, hor_dist / 500, 1)
+			-- adjusted_angle = (yaw - target_angle) % 360
 
-			print('Yaw_err:      ', math.floor(yaw_error))
-			print('Navigating to:', px, pz)
-			print('Current X/Z:  ', math.floor(x), math.floor(z))
-			print('Dist_mult:    ', dist_multiplier)
-			print('Distance:     ', hor_dist)
-			
-			POWER_OFF = 15
-			
-			if hor_dist > 200 then
-				
-				l = 15
-				r = 15
-				f = 0
+			local dx = px - x
+			local dz = pz - z
+			local yaw_r = math.rad(yaw - 180)
 
-				table.insert(yaw_velocity_history, 1, last_yaw - yaw)
-				yaw_velocity_history[10] = nil
+			local bearing = math.atan2(dx, dz)      -- radians, 0 = north
+			local heading_error = bearing - yaw_r
 
-				yaw_avg = 0
-				for i=1,#yaw_velocity_history do
-					yaw_avg = yaw_avg + yaw_velocity_history[i]
-				end
-				yaw_avg = yaw_avg / #yaw_velocity_history
-				-- yaw_velocity = yaw_avg
-				yaw_velocity = last_yaw - yaw
+			local dist = math.sqrt(dx*dx + dz*dz)
 
-				last_yaw = yaw
+			local max_tilt = 20.0      -- degrees
+			local k = 0.5              -- tune this
 
-				-- ! Lol
-				local output = 0.3 * yaw_error - 2 * yaw_velocity
-				
-				power_level = clamp(1, math.abs(yaw_error) / 3, 1)
-				BASE_POWER = 8
+			local tilt = math.min(max_tilt, k * clamp(0, dist, 100))
 
-				if output > 1 then
-					r = BASE_POWER + power_level
-					l = BASE_POWER
-				elseif output < -1 then
-					r = BASE_POWER
-					l = BASE_POWER + power_level
-				else
-					l = BASE_POWER
-					r = BASE_POWER
-				end
+			local eps = 1e-9
+			local desired_pitch = math.cos(heading_error) * tilt
+			local desired_roll  = math.sin(heading_error) * tilt
 
-				-- ! Write output
-				redstone.setAnalogOutput('right', clamp(0, r * dist_multiplier, 15))
-				redstone.setAnalogOutput('left', clamp(0, l * dist_multiplier, 15))
-			else
-				-- Disable big props
-				redstone.setAnalogOutput('left', 15)
-				redstone.setAnalogOutput('right', 15)
+			local HOVER_Y = 200
+			if math.abs(HOVER_Y - y) > 10 or true then
+				print('Not at HOVER_Y')
+				desired_pitch = 0
+				desired_roll = 0
 			end
 
-			if hor_dist > 4 then
-				modem.transmit(43, 0, yaw_error)
-				stable_ticks = 0
-			else
-				stable_ticks = stable_ticks + 1
-				modem.transmit(43, 0, -400)
-				print(stable_ticks)
-				if stable_ticks > 40 then
-					-- Reached the destination. Yippeee!
-					return
-				end
+			roll_error = roll - desired_roll
+			pitch_error = pitch - desired_pitch
+
+			-- print(pitch_error)
+
+			-- N = neg pitch
+			-- S = pos pitch
+
+			-- E = neg roll
+			-- W = pos roll
+			
+			local BASE_POWER = 11
+			n = BASE_POWER
+			e = BASE_POWER
+			s = BASE_POWER
+			w = BASE_POWER
+
+			pitch_adjustment = clamp(0, math.abs(pitch_error) / 5, 2)
+			roll_adjustment  = clamp(0, math.abs(roll_error ) / 10, 2)
+
+			if desired_pitch > pitch then
+				n = n - pitch_adjustment
+				s = s + pitch_adjustment
+			else 
+				n = n + pitch_adjustment
+				s = s - pitch_adjustment
 			end
 
-			print('----')
+			if desired_roll > roll then
+				e = e + roll_adjustment
+				w = w - roll_adjustment
+			else 
+				e = e - roll_adjustment
+				w = w + roll_adjustment
+			end
+
+
+			set_power('N_MOTOR', n)
+			set_power('E_MOTOR', e)
+			set_power('S_MOTOR', s)
+			set_power('W_MOTOR', w)
+
+			print('Desired pitch:', desired_pitch)
+			print('Pitch:        ', pitch)
+			print('Desired roll: ', desired_roll)
+			print('Roll:         ', roll)
+			print('---')
+
+			-- N is 0   deg
+			-- E is 90  deg
+			-- S is 180 deg
+			-- W is 270 deg
+
+			-- print(x, y, z)
+			-- print(pitch, yaw, roll)
 		end
 	end
 end
 
 function land() 
-	print('Landing')
-	local x, y, z
-	for i=1,3 do
-		print('Set power to', 14-i)
-		redstone.setAnalogOutput('front', 14-i)
-		sleep(9)
-	end
-	LOW_POWER = 5
-	redstone.setAnalogOutput('front', LOW_POWER)
-	print('Set power to', LOW_POWER)
-	print('Landed. Maybe upside down? I\'m a computer, how should I know')
+	print('Land')
 end
 
 function play_warning() 
-	-- return nil
-	print('playing warning')
-	local speaker = peripheral.find("speaker")
-	local dfpwm = require("cc.audio.dfpwm")
+	return nil
+	-- print('playing warning')
+	-- local speaker = peripheral.find("speaker")
+	-- local dfpwm = require("cc.audio.dfpwm")
 
-	for i=1,5 do
-		local decoder = dfpwm.make_decoder()
-		for chunk in io.lines("landing.dfpwm", 16 * 1024) do
-			local buffer = decoder(chunk)
+	-- for i=1,5 do
+	-- 	local decoder = dfpwm.make_decoder()
+	-- 	for chunk in io.lines("landing.dfpwm", 16 * 1024) do
+	-- 		local buffer = decoder(chunk)
 	
-			while not speaker.playAudio(buffer, 2000) do
-				os.pullEvent("speaker_audio_empty")
-			end
-		end
-	end
+	-- 		while not speaker.playAudio(buffer, 2000) do
+	-- 			os.pullEvent("speaker_audio_empty")
+	-- 		end
+	-- 	end
+	-- end
 end

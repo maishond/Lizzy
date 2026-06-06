@@ -49,8 +49,11 @@ else
 end
 
 if x and z then
+	print('1')
 	cx, cy, cz = get_state()
+	print(cx)
 	while cx == nil do
+		print(cx)
 		cx, cy, cz = get_state()
 	end
 	if cy < 200 then

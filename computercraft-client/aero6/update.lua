@@ -1,4 +1,4 @@
-local hostName = 'lizzy.jipfr.nl/aero5'
+local hostName = 'lizzy.jipfr.nl/aero6'
 local baseUrl = 'https://' .. hostName
 
 local urls = {

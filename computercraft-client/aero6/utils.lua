@@ -72,7 +72,7 @@ function get_state()
 		local p3_z_diff = p3_z - z
 
 		-- ! Pitch
-		local horizontal_pitch = math.sqrt(p2_x_diff * p2_x_diff + p2_z_diff * p2_z_diff)
+		local horizontal_pitch = math.sqrt(p2_x_diff^2 + p2_z_diff^2)
 		local pitch = math.atan2(p2_y_diff, horizontal_pitch) * 180 / math.pi
 
 
@@ -88,8 +88,9 @@ function get_state()
 
 
 		-- ! Roll
-		local horizontal_roll =math.sqrt(p3_x * p3_x + p3_z_diff * p3_z_diff)
+		local horizontal_roll =math.sqrt(p3_x_diff ^ 2 + p3_z_diff ^ 2)
 		local roll = math.atan2(p3_y_diff, horizontal_roll) * 180 / math.pi
+		-- local roll = horizontal_roll
 
 		return x, y, z, pitch, yaw, roll
 	end

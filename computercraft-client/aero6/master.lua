@@ -15,6 +15,7 @@ require 'mods'
 redstone.setAnalogOutput('left', 15)
 redstone.setAnalogOutput('right', 15)
 redstone.setAnalogOutput('front', 15)
+redstone.setAnalogOutput('top', 15)
 
 print("Flight controller starting...")
 
