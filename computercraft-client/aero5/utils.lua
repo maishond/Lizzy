@@ -43,9 +43,12 @@ function get_state()
 
     local spl = split(message, " ")
 
-    local p2_x = tonumber(spl[1])
-    local p2_y = tonumber(spl[2])
-    local p2_z = tonumber(spl[3])
+    -- local p2_x = tonumber(spl[1])
+    -- local p2_y = tonumber(spl[2])
+    -- local p2_z = tonumber(spl[3])
+	local x = tonumber(spl[1])
+    local y = tonumber(spl[2])
+    local z = tonumber(spl[3])
 
 	-- ! P3 pos (right)
     repeat
@@ -60,7 +63,7 @@ function get_state()
     local p3_z = tonumber(spl[3])
 
 	-- ! Self
-    local x, y, z = gps.locate(0.1)
+    local p2_x, p2_y, p2_z = gps.locate(0.1)
     if x and p2_x and p3_x then
 
 		local p2_x_diff = p2_x - x
@@ -81,7 +84,8 @@ function get_state()
 		-- print(math.floor(p2_x), math.floor(p2_y), math.floor(p2_z))
 		-- print(math.floor(p3_x), math.floor(p3_y), math.floor(p3_z))
 		-- print(math.floor(p2_x_diff), math.floor(p2_z_diff))
-		local yaw = 360 - (180 + math.atan2(p2_x_diff, p2_z_diff) * 180 / math.pi)
+		-- local yaw = 360 - (180 + math.atan2(p2_x_diff, p2_z_diff) * 180 / math.pi)
+		local yaw = 360 - math.deg(math.atan2(p2_x_diff, p2_z_diff))
 		while yaw < 0 do
 			yaw = yaw + 360
 		end

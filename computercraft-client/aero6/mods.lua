@@ -48,19 +48,19 @@ function stabilise_at(px, pz)
 			local bearing = math.atan2(dx, dz)      -- radians, 0 = north
 			local heading_error = bearing - yaw_r
 
-			local dist = math.sqrt(dx*dx + dz*dz)
+			local dist = math.sqrt(dx^2 + dz^2)
 
 			local max_tilt = 20.0      -- degrees
-			local k = 0.5              -- tune this
+			local k = 0.1              -- tune this
 
-			local tilt = math.min(max_tilt, k * clamp(0, dist, 100))
+			local tilt = math.min(max_tilt, k * clamp(0, dist / 40, 400))
 
 			local eps = 1e-9
 			local desired_pitch = math.cos(heading_error) * tilt
 			local desired_roll  = math.sin(heading_error) * tilt
 
 			local HOVER_Y = 200
-			if math.abs(HOVER_Y - y) > 10 or true then
+			if math.abs(HOVER_Y - y) > 10 then
 				print('Not at HOVER_Y')
 				desired_pitch = 0
 				desired_roll = 0
@@ -83,15 +83,15 @@ function stabilise_at(px, pz)
 			s = BASE_POWER
 			w = BASE_POWER
 
-			pitch_adjustment = clamp(0, math.abs(pitch_error) / 5, 2)
-			roll_adjustment  = clamp(0, math.abs(roll_error ) / 10, 2)
+			pitch_adjustment = clamp(0, math.abs(pitch_error) / 2, 1)
+			roll_adjustment  = clamp(0, math.abs(roll_error ) / 2, 1)
 
 			if desired_pitch > pitch then
-				n = n - pitch_adjustment
-				s = s + pitch_adjustment
-			else 
 				n = n + pitch_adjustment
 				s = s - pitch_adjustment
+			else 
+				n = n - pitch_adjustment
+				s = s + pitch_adjustment
 			end
 
 			if desired_roll > roll then

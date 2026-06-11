@@ -28,70 +28,125 @@ function angle_diff(a, b)
 	return d
 end
 
+local function normalize(x, y, z)
+    local m = math.sqrt(x*x + y*y + z*z)
+    if m < 1e-9 then
+        return 0, 0, 0
+    end
+    return x/m, y/m, z/m
+end
+
+local function cross(ax, ay, az, bx, by, bz)
+    return
+        ay*bz - az*by,
+        az*bx - ax*bz,
+        ax*by - ay*bx
+end
+
 function get_state()
-	-- ! Get P2 pos (rear)
-    local event, side, channel, replyChannel, message, distance
+    local modem = peripheral.wrap("back")
+    modem.open(41)
+    modem.open(42)
 
-	modem = peripheral.wrap('back')
-	modem.open(42)
-	modem.open(41)
+    local rear_msg
+    local right_msg
 
-    repeat
-        event, side, channel, replyChannel, message, distance =
+    while not (rear_msg and right_msg) do
+        local _, _, channel, _, message =
             os.pullEvent("modem_message")
-    until channel == 42
 
-    local spl = split(message, " ")
+        if channel == 42 then
+            rear_msg = message
+        elseif channel == 41 then
+            right_msg = message
+        end
+    end
 
-    local p2_x = tonumber(spl[1])
-    local p2_y = tonumber(spl[2])
-    local p2_z = tonumber(spl[3])
+    local rear = split(rear_msg, " ")
+    local right = split(right_msg, " ")
 
-	-- ! P3 pos (right)
-    repeat
-        event, side, channel, replyChannel, message, distance =
-            os.pullEvent("modem_message")
-    until channel == 41
+    local p2_x = tonumber(rear[1])
+    local p2_y = tonumber(rear[2])
+    local p2_z = tonumber(rear[3])
 
-    spl = split(message, " ")
+    local p3_x = tonumber(right[1])
+    local p3_y = tonumber(right[2])
+    local p3_z = tonumber(right[3])
 
-    local p3_x = tonumber(spl[1])
-    local p3_y = tonumber(spl[2])
-    local p3_z = tonumber(spl[3])
-
-	-- ! Self
     local x, y, z = gps.locate(0.1)
-    if x and p2_x and p3_x then
 
-		local p2_x_diff = p2_x - x
-		local p2_y_diff = p2_y - y
-		local p2_z_diff = p2_z - z
+    if not (x and p2_x and p3_x) then
+        return nil
+    end
 
-		local p3_x_diff = p3_x - x
-		local p3_y_diff = p3_y - y
-		local p3_z_diff = p3_z - z
+    ------------------------------------------------------------------
+    -- Marker vectors in world coordinates
+    ------------------------------------------------------------------
 
-		-- ! Pitch
-		local horizontal_pitch = math.sqrt(p2_x_diff^2 + p2_z_diff^2)
-		local pitch = math.atan2(p2_y_diff, horizontal_pitch) * 180 / math.pi
+    local rx = p2_x - x
+    local ry = p2_y - y
+    local rz = p2_z - z
 
+    local qx = p3_x - x
+    local qy = p3_y - y
+    local qz = p3_z - z
 
-		-- ! Yaw
-		-- print(math.floor(x), math.floor(y), math.floor(z))
-		-- print(math.floor(p2_x), math.floor(p2_y), math.floor(p2_z))
-		-- print(math.floor(p3_x), math.floor(p3_y), math.floor(p3_z))
-		-- print(math.floor(p2_x_diff), math.floor(p2_z_diff))
-		local yaw = 360 - (180 + math.atan2(p2_x_diff, p2_z_diff) * 180 / math.pi)
-		while yaw < 0 do
-			yaw = yaw + 360
-		end
+    ------------------------------------------------------------------
+    -- Normalize marker directions
+    ------------------------------------------------------------------
 
+    rx, ry, rz = normalize(rx, ry, rz)
+    qx, qy, qz = normalize(qx, qy, qz)
 
-		-- ! Roll
-		local horizontal_roll =math.sqrt(p3_x_diff ^ 2 + p3_z_diff ^ 2)
-		local roll = math.atan2(p3_y_diff, horizontal_roll) * 180 / math.pi
-		-- local roll = horizontal_roll
+    ------------------------------------------------------------------
+    -- Body axes
+    --
+    -- rear marker = behind center
+    -- right marker = right of center
+    ------------------------------------------------------------------
 
-		return x, y, z, pitch, yaw, roll
-	end
+    local fx = -rx
+    local fy = -ry
+    local fz = -rz
+
+    local rix = qx
+    local riy = qy
+    local riz = qz
+
+    local ux, uy, uz =
+        cross(fx, fy, fz,
+              rix, riy, riz)
+
+    ux, uy, uz = normalize(ux, uy, uz)
+
+    ------------------------------------------------------------------
+    -- Yaw
+    --
+    -- 0 = north (+z)
+    -- 90 = east (+x)
+    ------------------------------------------------------------------
+
+    local yaw =
+        math.deg(math.atan2(fx, fz))
+
+    if yaw < 0 then
+        yaw = yaw + 360
+    end
+
+    ------------------------------------------------------------------
+    -- Pitch
+    ------------------------------------------------------------------
+
+    local pitch =
+        math.deg(math.atan2(fy,
+            math.sqrt(fx*fx + fz*fz)))
+
+    ------------------------------------------------------------------
+    -- Roll
+    ------------------------------------------------------------------
+
+    local roll =
+        math.deg(math.atan2(riy, uy))
+
+    return x, y, z, pitch, yaw, roll
 end

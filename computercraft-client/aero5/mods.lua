@@ -127,7 +127,7 @@ function land()
 	for i=1,3 do
 		print('Set power to', 14-i)
 		redstone.setAnalogOutput('front', 14-i)
-		sleep(9)
+		sleep(16)
 	end
 	LOW_POWER = 5
 	redstone.setAnalogOutput('front', LOW_POWER)

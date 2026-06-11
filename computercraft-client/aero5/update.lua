@@ -8,21 +8,22 @@ local urls = {
     ['point2.lua'] = baseUrl .. '/point2.lua',
     ['point3.lua'] = baseUrl .. '/point3.lua',
     ['mods.lua'] = baseUrl .. '/mods.lua',
-    ['reset.lua'] = baseUrl .. '/reset.lua',
+    -- ['reset.lua'] = baseUrl .. '/reset.lua',
     ['utils.lua'] = baseUrl .. '/utils.lua',
+    ['gridsearch.lua'] = baseUrl .. '/gridsearch.lua',
     ['yawprop.lua'] = baseUrl .. '/yawprop.lua',
     ['forward.lua'] = baseUrl .. '/forward.lua',
     ['landing.dfpwm'] = baseUrl .. '/landing.dfpwm',
     ['goto.lua'] = baseUrl .. '/goto.lua',
     ['crashed.lua'] = baseUrl .. '/crashed.lua',
-    ['hover.lua'] = baseUrl .. '/hover.lua',
-    ['portable-radar.lua'] = baseUrl .. '/portable-radar.lua',
+    -- ['hover.lua'] = baseUrl .. '/hover.lua',
+    -- ['portable-radar.lua'] = baseUrl .. '/portable-radar.lua',
 }
 
 -- Loop over urls
 for key, url in pairs(urls) do
     -- Get response
-    print('G', url)
+    -- print('G', url)
     local response = http.get(url)
 
     if response ~= nil then
@@ -30,10 +31,11 @@ for key, url in pairs(urls) do
         local responseText = response.readAll()
 
         -- Write to file
+        print(key)
         local file = fs.open(key, 'w')
         file.write(responseText)
         file.close()
-        print('Saved ' .. key)
+        -- print('Saved ' .. key)
 
         -- Close response
         response.close()

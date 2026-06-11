@@ -16,9 +16,11 @@ keymap = {
 	sting = {x = -762, z = 569},
 	wouter = {x = -270, z = -176},
 	casper = {x = -1692, z = -183},
-	airstrip = {x = -1180, z = -2840},
+	airstrip = {x = -1198, z = -2856},
 	airstrip2 = {x = -1255, z = -2849},
-	villagers = {x = -1969, z = -1093}
+	airstrip3 = {x = -1153, z = -2838},
+	villagers = {x = -1969, z = -1093},
+	factory = {x = -512, z = 213}
 }
 
 if x_or_name_arg == nil then
