@@ -66,7 +66,7 @@ function stabilise_at(px, pz)
 
 			-- ! Since the airship can go forward and backward (being symmetrical in that aspect), adjust the yaw and desired prop direction
 			do_ccw = false
-			if math.abs(yaw_error) > 90 and hor_dist < 100 then
+			if math.abs(yaw_error) > 90 and hor_dist < 100 and hor_dist > 10 then
 				do_ccw = true
 				yaw_error = 180 - yaw_error % 360
 				while yaw < 0 do
@@ -74,6 +74,21 @@ function stabilise_at(px, pz)
 				end
 				yaw = -yaw
 			end
+			
+			
+
+			-- ! Calculate turning power with distance to goal in mind
+			BASE_POWER = 226
+			MAX_SPEED_ADJUST = 60
+
+			local l = BASE_POWER
+			local r = BASE_POWER
+
+			-- ?
+			table.insert(yaw_history, 1, yaw)
+			yaw_velocity = yaw - (yaw_history[30] or 0)
+			yaw_history[30] = nil
+			last_yaw = yaw
 
 			print('Yaw corr:     ', math.floor(yaw_error + 0.5))
 			print('Yaw vel:      ', yaw_velocity)
@@ -81,21 +96,6 @@ function stabilise_at(px, pz)
 			print('Current X/Z:  ', math.floor(x), math.floor(z))
 			print('Dist_mult:    ', dist_multiplier)
 			print('Distance:     ', hor_dist)
-			
-			
-
-			-- ! Calculate turning power with distance to goal in mind
-			BASE_POWER = 226
-			MAX_SPEED_ADJUST = 50
-
-			local l = BASE_POWER
-			local r = BASE_POWER
-
-			-- ?
-			table.insert(yaw_history, 1, yaw)
-			yaw_velocity = yaw - (yaw_history[10] or 0)
-			yaw_history[10] = nil
-			last_yaw = yaw
 
 			-- yaw_avg = 0
 			-- for i=1,#yaw_velocity_history do
@@ -105,12 +105,13 @@ function stabilise_at(px, pz)
 			-- yaw_velocity = yaw_avg
 
 
-			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 2 and hor_dist < 40)
+			yaw_error = yaw_error + clamp(-40, yaw_velocity * 10, 40)
+			rotate_in_place = (math.abs(yaw_error) > 30 and hor_dist > 10) or (math.abs(yaw_error) >= 2 and hor_dist < 40 and hor_dist > 10)
 			print('Rotate CoM:   ', rotate_in_place)
 			apply_dist_mult = true
 			if rotate_in_place then
 				-- ! Rotate in place
-				s = clamp(0, math.abs((yaw_error / 2) ^ 2), 40)
+				s = clamp(0, math.abs((yaw_error)), 40)
 				-- print(s)
 				if yaw_error < 0 then s = -s end
 				l = s
@@ -118,8 +119,10 @@ function stabilise_at(px, pz)
 				apply_dist_mult = false
 			else
 				-- ! Move forward with 
-				local output = 0.6 * yaw_error - 2 * yaw_velocity
-				power_level = clamp(1, math.abs(yaw_error) / 5, MAX_SPEED_ADJUST)
+				print('Adjusted err: ', yaw_error)
+
+				local output = 0.6 * yaw_error -- 0.1 * yaw_velocity
+				power_level = clamp(1, (math.abs(yaw_error)), MAX_SPEED_ADJUST)
 
 				if output > 1 then
 					l = BASE_POWER + power_level

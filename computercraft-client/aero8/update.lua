@@ -30,8 +30,7 @@ for key, url in pairs(urls) do
         local file = fs.open(key, 'w')
         file.write(responseText)
         file.close()
-        -- print('Saved ' .. key)
-
+        
         -- Close response
         response.close()
     else

@@ -76,11 +76,15 @@ function get_state()
 		-- 	yaw = yaw + 360
 		-- end
 
+		correction_distance = 45
+		local corr_x = x + correction_distance * math.cos(math.rad(yaw - 90))
+		local corr_z = z + correction_distance * math.sin(math.rad(yaw - 90))
+
 
 		-- ! Oops
 		pitch = -1
 		roll = -1
 
-		return x, y, z, pitch, yaw, roll
+		return corr_x, y, corr_z, pitch, yaw, roll
 	end
 end
