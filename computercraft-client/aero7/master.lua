@@ -7,14 +7,9 @@ file.close()
 -- ! Ports docs
 -- ! 42 is point 2 XYZ (back)
 -- ! 41 is point 3 XYZ (side)
--- ! 43 is yaw_error (emitted by master computer)
 ------------
 
 require 'mods'
-
-redstone.setAnalogOutput('left', 15)
-redstone.setAnalogOutput('right', 15)
-redstone.setAnalogOutput('front', 15)
 
 print("Flight controller starting...")
 

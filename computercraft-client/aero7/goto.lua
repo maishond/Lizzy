@@ -6,9 +6,6 @@ local modem = peripheral.wrap("back")
 modem.open(42) -- p2 (back)  
 modem.open(41) -- p3 (side)
 
-redstone.setAnalogOutput('left', 15)
-redstone.setAnalogOutput('right', 15)
-
 -- ! Take args
 local x_or_name_arg, z_arg = ...
 
@@ -52,13 +49,14 @@ end
 
 if x and z then
 	cx, cy, cz = get_state()
+	print(cx)
 	while cx == nil do
 		cx, cy, cz = get_state()
 	end
-	if cy < 200 then
-		play_warning()
-		take_off()
-	end
+	-- if cy < 200 then
+	-- 	play_warning()
+	-- 	take_off()
+	-- end
 	redstone.setAnalogOutput('front', 14)
 		
 	

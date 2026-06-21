@@ -2,10 +2,8 @@ local modem = peripheral.wrap("front")
 
 require 'mods'
 
-set_front(2)
-set_rear(2)
-set_left(2)
-set_right(2)
+peripheral.wrap('left').setTargetSpeed(0)
+peripheral.wrap('right').setTargetSpeed(0)
 
 -- while true do
 --     x, y, z = get_state()

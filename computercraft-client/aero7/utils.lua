@@ -64,6 +64,7 @@ function get_state()
 
 	-- ! Self
     local p2_x, p2_y, p2_z = gps.locate(0.1)
+    -- local x, y, z = gps.locate(0.1)
     if x and p2_x and p3_x then
 
 		local p2_x_diff = p2_x - x
