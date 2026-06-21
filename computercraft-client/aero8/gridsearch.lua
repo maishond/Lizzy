@@ -2,9 +2,10 @@ require 'utils'
 require 'mods'
 
 -- ! Open modem
-local modem = peripheral.wrap("back")
-modem.open(42) -- p2 (back)  
+local modem = peripheral.find("modem")
+modem.open(40) -- p1 (front)
 modem.open(41) -- p3 (side)
+modem.open(42) -- p2 (back)  
 
 redstone.setAnalogOutput('left', 15)
 redstone.setAnalogOutput('right', 15)

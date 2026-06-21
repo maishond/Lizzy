@@ -32,9 +32,10 @@ function get_state()
 	-- ! Get P2 pos (rear)
     local event, side, channel, replyChannel, message, distance
 
-	modem = peripheral.wrap('back')
-	modem.open(42)
-	modem.open(41)
+	modem = peripheral.find('modem')
+	modem.open(40) -- p1 (front)
+	modem.open(41) -- p3 (side)
+	modem.open(42) -- p2 (back)  
 
     repeat
         event, side, channel, replyChannel, message, distance =
@@ -46,9 +47,9 @@ function get_state()
     -- local p2_x = tonumber(spl[1])
     -- local p2_y = tonumber(spl[2])
     -- local p2_z = tonumber(spl[3])
-	local x = tonumber(spl[1])
-    local y = tonumber(spl[2])
-    local z = tonumber(spl[3])
+	local p2_x = tonumber(spl[1])
+    local p2_y = tonumber(spl[2])
+    local p2_z = tonumber(spl[3])
 
 	-- ! P3 pos (right)
     repeat
@@ -62,9 +63,23 @@ function get_state()
     local p3_y = tonumber(spl[2])
     local p3_z = tonumber(spl[3])
 
+	-- ! P1 pos (front)
+    repeat
+        event, side, channel, replyChannel, message, distance =
+            os.pullEvent("modem_message")
+    until channel == 40
+
+    spl = split(message, " ")
+
+    local x = tonumber(spl[1])
+    local y = tonumber(spl[2])
+    local z = tonumber(spl[3])
+
 	-- ! Self
-    local p2_x, p2_y, p2_z = gps.locate(0.1)
+    -- local p2_x, p2_y, p2_z = gps.locate(0.1)
+
     -- local x, y, z = gps.locate(0.1)
+
     if x and p2_x and p3_x then
 
 		local p2_x_diff = p2_x - x

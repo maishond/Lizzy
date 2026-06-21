@@ -1,6 +1,6 @@
 -- ! Write startup override
 local file = fs.open('startup-override.lua', 'w')
-file.write("require('update')\nrequire('point3')")
+file.write("require('update')\nrequire('point1')")
 file.close()
 
 function mean_gps_locate(samples, timeout)
@@ -32,7 +32,7 @@ function mean_gps_locate(samples, timeout)
 		sum_z / count
 end
 
-print('hi3')
+print('hi2')
 
 local modem = peripheral.find('modem')
 
@@ -41,8 +41,8 @@ while true do
 	local x, y, z = mean_gps_locate(8, 0.02)
 
 	if x and y and z then
-		print(math.floor(x), math.floor(y), math.floor(z))
-		modem.transmit(41, 2, string.format('%s %s %s', x, y, z))
+		print(x, y, z)
+		modem.transmit(40, 2, string.format('%s %s %s', x, y, z))
 	end
 
 	sleep(0.05)

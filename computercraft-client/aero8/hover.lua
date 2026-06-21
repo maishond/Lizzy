@@ -1,1 +1,0 @@
-redstone.setAnalogOutput('front', 12)

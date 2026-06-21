@@ -13,10 +13,7 @@ require 'mods'
 
 print("Flight controller starting...")
 
-local modem = peripheral.wrap("back")
-
-modem.open(42) -- p2 (back)
-modem.open(41) -- p3 (side)
+local modem = peripheral.find("modem")
 
 
 -- ! Main loop

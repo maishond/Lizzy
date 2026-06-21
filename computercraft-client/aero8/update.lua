@@ -1,23 +1,20 @@
-local hostName = 'lizzy.jipfr.nl/aero7'
+local hostName = 'lizzy.jipfr.nl/aero8'
 local baseUrl = 'https://' .. hostName
 
 local urls = {
     ['update.lua'] = baseUrl .. '/update.lua',
     ['startup.lua'] = baseUrl .. '/startup.lua',
     ['master.lua'] = baseUrl .. '/master.lua',
+    ['point1.lua'] = baseUrl .. '/point1.lua',
     ['point2.lua'] = baseUrl .. '/point2.lua',
     ['point3.lua'] = baseUrl .. '/point3.lua',
     ['mods.lua'] = baseUrl .. '/mods.lua',
     ['reset.lua'] = baseUrl .. '/reset.lua',
     ['utils.lua'] = baseUrl .. '/utils.lua',
     ['gridsearch.lua'] = baseUrl .. '/gridsearch.lua',
-    ['yawprop.lua'] = baseUrl .. '/yawprop.lua',
-    ['forward.lua'] = baseUrl .. '/forward.lua',
     ['landing.dfpwm'] = baseUrl .. '/landing.dfpwm',
     ['goto.lua'] = baseUrl .. '/goto.lua',
-    ['crashed.lua'] = baseUrl .. '/crashed.lua',
-    -- ['hover.lua'] = baseUrl .. '/hover.lua',
-    -- ['portable-radar.lua'] = baseUrl .. '/portable-radar.lua',
+    ['enginespeed.lua'] = baseUrl .. '/enginespeed.lua',
 }
 
 -- Loop over urls

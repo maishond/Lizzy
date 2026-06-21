@@ -32,9 +32,9 @@ function mean_gps_locate(samples, timeout)
 		sum_z / count
 end
 
-print('hi2')
+print('hi1')
 
-local modem = peripheral.wrap('back')
+local modem = peripheral.find('modem')
 
 while true do
 	-- ! Mean GPS position

@@ -2,9 +2,10 @@ require 'utils'
 require 'mods'
 
 -- ! Open modem
-local modem = peripheral.wrap("back")
-modem.open(42) -- p2 (back)  
+local modem = peripheral.find("modem")
+modem.open(40) -- p1 (front)
 modem.open(41) -- p3 (side)
+modem.open(42) -- p2 (back)  
 
 -- ! Take args
 local x_or_name_arg, z_arg = ...
@@ -57,8 +58,6 @@ if x and z then
 	-- 	play_warning()
 	-- 	take_off()
 	-- end
-	redstone.setAnalogOutput('front', 14)
-		
 	
 	print('Heading to', x, z)
 	stabilise_at(x, z)

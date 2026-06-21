@@ -1,7 +1,8 @@
 require 'utils'
-local modem = peripheral.wrap("back")
-modem.open(42)
-modem.open(41)
+local modem = peripheral.find("modem")
+modem.open(40) -- p1 (front)
+modem.open(41) -- p3 (side)
+modem.open(42) -- p2 (back)  
 
 function angle_diff(current, target)
     local diff = (target - current + 180) % 360 - 180
@@ -12,27 +13,35 @@ yaw_velocity_history = {}
 stable_ticks = 0
 last_yaw = 0
 
-leftprop = peripheral.wrap("right")
-rightprop = peripheral.wrap("left") -- Trust!
+function set_left_prop(v)
+	local modem = peripheral.find('modem')
+	modem.transmit(88,0, v)
+end
+
+function set_right_prop(v)
+	local modem = peripheral.find('modem')
+	modem.transmit(89, 0, v)
+end
+
 MAX_SPEED = 200
 
-function take_off() 
-	print('Taking off')
-	for i=1,4 do
-		print('Set power to', 10+i)
-		redstone.setAnalogOutput('front', 10+i)
-		sleep(7)
-	end
-	while true do
-		x, y, z = get_state()
-		if y and y > 290 then
-			print('Y >= 290 passed! Time to let it stabilise for a bit')
-			sleep(15)
-			break
-		end
-	end
-	print('Take-off complete!')
-end
+-- function take_off() 
+-- 	print('Taking off')
+-- 	for i=1,4 do
+-- 		print('Set power to', 10+i)
+-- 		redstone.setAnalogOutput('front', 10+i)
+-- 		sleep(7)
+-- 	end
+-- 	while true do
+-- 		x, y, z = get_state()
+-- 		if y and y > 290 then
+-- 			print('Y >= 290 passed! Time to let it stabilise for a bit')
+-- 			sleep(15)
+-- 			break
+-- 		end
+-- 	end
+-- 	print('Take-off complete!')
+-- end
 
 function stabilise_at(px, pz)
 	last_yaw_adjust = 0
@@ -131,11 +140,11 @@ function stabilise_at(px, pz)
 			print('----')
 			if apply_dist_mult == false then dist_multiplier = 1 end
 			if do_ccw then
-				leftprop.setTargetSpeed(-r * dist_multiplier)
-				rightprop.setTargetSpeed(-l * dist_multiplier)
+				set_left_prop(-r * dist_multiplier)
+				set_right_prop(-l * dist_multiplier)
 			else
-				leftprop.setTargetSpeed(r * dist_multiplier)
-				rightprop.setTargetSpeed(l * dist_multiplier)
+				set_left_prop(r * dist_multiplier)
+				set_right_prop(l * dist_multiplier)
 			end
 
 			-- ! Set height
@@ -148,20 +157,6 @@ function stabilise_at(px, pz)
 
 		end
 	end
-end
-
-function land() 
-	print('Landing')
-	local x, y, z
-	for i=1,3 do
-		print('Set power to', 14-i)
-		redstone.setAnalogOutput('front', 14-i)
-		sleep(16)
-	end
-	LOW_POWER = 5
-	redstone.setAnalogOutput('front', LOW_POWER)
-	print('Set power to', LOW_POWER)
-	print('Landed. Maybe upside down? I\'m a computer, how should I know')
 end
 
 function play_warning() 
