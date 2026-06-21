@@ -32,7 +32,7 @@ function mean_gps_locate(samples, timeout)
 		sum_z / count
 end
 
-print('hi1')
+print('hi2')
 
 local modem = peripheral.find('modem')
 

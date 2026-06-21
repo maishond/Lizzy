@@ -7,9 +7,8 @@ print('Engine speed controller!')
 
 local modem = peripheral.find('modem')
 
-leftprop = peripheral.wrap('right')
-rightprop = peripheral.wrap('left')
--- computer isn't facing front
+leftprop = peripheral.wrap('left')
+rightprop = peripheral.wrap('right')
 
 while true do
 	local event, side, channel, replyChannel, leftvalue, rightvalue, distance
