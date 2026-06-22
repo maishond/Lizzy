@@ -15,6 +15,8 @@ print("Flight controller starting...")
 
 local modem = peripheral.find("modem")
 
+require 'reset'
+
 
 -- ! Main loop
 print('Main initialised')
