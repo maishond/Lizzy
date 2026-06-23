@@ -11,24 +11,19 @@ modem.open(42) -- p2 (back)
 local x_or_name_arg, z_arg = ...
 
 keymap = {
-	sting = {x = -762, z = 569},
-	wouter = {x = -270, z = -176},
-	casper = {x = -1692, z = -183},
-	airstrip = {x = -1198, z = -2856},
-	airstrip2 = {x = -1255, z = -2849},
-	airstrip3 = {x = -1153, z = -2838},
-	villagers = {x = -1969, z = -1093},
-	factory = {x = -512, z = 213}
+	spawn = {x = 0, z = 0},
+	border = {x = 30000000, z = 30000000},
 }
 
 if x_or_name_arg == nil then
 	print('\ngoto usage:')
-	print('    goto -579 -4136')
+	print('    goto $x $z')
+	print('    ^ e.g `goto -579 -4136`')
 	print('    goto <location>')
-	print('    ^ e.g `goto airstrip`')
+	print('    ^ e.g `goto spawn`')
 	print('\nPre-programmed locations:')
 	for k,v in pairs(keymap) do
-		print(k)
+		print('goto', k)
 	end
 	print('\n')
 	return
@@ -63,11 +58,11 @@ if x and z then
 	stabilise_at(x, z)
 	
 	print('Stabilised at co-ords, landing!')
-	play_warning()
-	land()
+	-- play_warning()
+	-- land()
 	
 	print('----')
-	print('Thank you for flying with the M-6')
+	print('Thank you for flying on the Zenith!')
 else
 	print('Invalid arguments')
 end

@@ -76,7 +76,7 @@ function get_state()
 		-- 	yaw = yaw + 360
 		-- end
 
-		correction_distance = 45
+		correction_distance = 38
 		local corr_x = x + correction_distance * math.cos(math.rad(yaw - 90))
 		local corr_z = z + correction_distance * math.sin(math.rad(yaw - 90))
 

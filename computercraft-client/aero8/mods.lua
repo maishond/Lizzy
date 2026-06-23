@@ -56,13 +56,29 @@ function stabilise_at(px, pz)
 
 			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
 
-			max_distance_before_slowing = 800
+			max_distance_before_slowing = 1200
 			distance_clamped = clamp(0, hor_dist, max_distance_before_slowing) / max_distance_before_slowing
 			-- dist_multiplier_v = 1 - (1 - distance_clamped) * (1 - distance_clamped)
 			dist_multiplier_v = 1 - ((1 - distance_clamped) ^ 1.5)
 			dist_multiplier = clamp(0, dist_multiplier_v, 1)
 
 			print('Yaw_err:      ', math.floor(yaw_error + 0.5))
+
+			-- ! Arrival check
+			if hor_dist > 4 then
+				stable_ticks = 0
+			else
+				stable_ticks = stable_ticks + 1
+				if stable_ticks > 160 then
+					for i=0,10 do
+						print('SETTING TO 0')
+						set_left_prop(0)
+						set_right_prop(0)
+						sleep(0.1)
+					end
+					return
+				end
+			end
 
 			-- ! Since the airship can go forward and backward (being symmetrical in that aspect), adjust the yaw and desired prop direction
 			do_ccw = false
@@ -96,6 +112,7 @@ function stabilise_at(px, pz)
 			print('Current X/Z:  ', math.floor(x), math.floor(z))
 			print('Dist_mult:    ', dist_multiplier)
 			print('Distance:     ', hor_dist)
+			print('Stable ticks: ', stable_ticks)
 
 			-- yaw_avg = 0
 			-- for i=1,#yaw_velocity_history do
@@ -108,6 +125,7 @@ function stabilise_at(px, pz)
 			yaw_error = yaw_error + clamp(-40, yaw_velocity * 10, 40)
 			rotate_in_place = (math.abs(yaw_error) > 30 and hor_dist > 10) or (math.abs(yaw_error) >= 2 and hor_dist < 40 and hor_dist > 10)
 			print('Rotate CoM:   ', rotate_in_place)
+			print('Adjusted err: ', yaw_error)
 			apply_dist_mult = true
 			if rotate_in_place then
 				-- ! Rotate in place
@@ -119,7 +137,6 @@ function stabilise_at(px, pz)
 				apply_dist_mult = false
 			else
 				-- ! Move forward with 
-				print('Adjusted err: ', yaw_error)
 
 				local output = 0.6 * yaw_error -- 0.1 * yaw_velocity
 				power_level = clamp(1, (math.abs(yaw_error)), MAX_SPEED_ADJUST)

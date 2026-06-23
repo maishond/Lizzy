@@ -7,12 +7,11 @@ modem.open(40) -- p1 (front)
 modem.open(41) -- p3 (side)
 modem.open(42) -- p2 (back)  
 
-redstone.setAnalogOutput('left', 15)
-redstone.setAnalogOutput('right', 15)
-redstone.setAnalogOutput('front', 14)
+set_left_prop(0)
+set_right_prop(0)
 
 print('Wait')
-sleep(30)
+-- sleep(30)
 print('They don\'t love you like I love you')
 
 

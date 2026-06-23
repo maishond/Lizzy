@@ -8,6 +8,7 @@ local urls = {
     ['point2.lua'] = baseUrl .. '/point2.lua',
     ['mods.lua'] = baseUrl .. '/mods.lua',
     ['reset.lua'] = baseUrl .. '/reset.lua',
+    ['spin.lua'] = baseUrl .. '/spin.lua',
     ['utils.lua'] = baseUrl .. '/utils.lua',
     ['gridsearch.lua'] = baseUrl .. '/gridsearch.lua',
     ['landing.dfpwm'] = baseUrl .. '/landing.dfpwm',
