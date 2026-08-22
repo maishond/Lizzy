@@ -1,0 +1,1 @@
+redstone.setAnalogOutput('top', 11)
