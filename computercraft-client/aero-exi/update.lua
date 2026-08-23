@@ -1,6 +1,6 @@
 redstone.setAnalogOutput('left', 15)
 redstone.setAnalogOutput('right', 15)
-redstone.setAnalogOutput('front', 10)
+redstone.setAnalogOutput('front', 15)
 
 local hostName = 'lizzy.jipfr.nl/aero-exi'
 local baseUrl = 'https://' .. hostName

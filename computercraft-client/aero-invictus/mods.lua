@@ -11,8 +11,8 @@ last_yaw = 0
 
 -- BASE_POWER = 226
 -- MAX_SPEED_ADJUST = 30
-BASE_POWER = 20
-MAX_SPEED_ADJUST = 10
+BASE_POWER = 226
+MAX_SPEED_ADJUST = 30
 
 function take_off() 
 	print('Taking off')
@@ -42,7 +42,7 @@ function stabilise_at(px, pz)
 
 			destination_angle = math.deg(math.atan2(x_diff, z_diff)) + 180
 			yaw_error = angle_diff(destination_angle, yaw)
-d
+
 			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
 
 			max_distance_before_slowing = 800
@@ -57,10 +57,12 @@ d
 			do_ccw = false
 			if math.abs(yaw_error) > 90 then
 				do_ccw = true
-				yaw_error = 180 - yaw_error
-				while yaw_error > 180 do
+				if yaw_error > 0 then
 					yaw_error = yaw_error - 180
+				else
+					yaw_error = yaw_error + 180
 				end
+				yaw_error = ((yaw_error + 180) % 360) - 180
 			end
 			
 			print('Yaw error 2:  ', math.floor(yaw_error + 0.5))
@@ -77,6 +79,10 @@ d
 
 			local l = BASE_POWER
 			local r = BASE_POWER
+			local drive_sign = 1
+			if do_ccw then
+				drive_sign = -1
+			end
 
 			-- ?
 			table.insert(yaw_velocity_history, 1, last_yaw - yaw)
@@ -93,13 +99,12 @@ d
 			last_yaw = yaw
 
 			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 1 and hor_dist < 40)
-			rotate_in_place = true
+			-- rotate_in_place = true
 			print('Rotate CoM:   ', rotate_in_place)
 			apply_dist_mult = true
 			if rotate_in_place then
 				-- ! Rotate in place
 				s = clamp(0, math.abs((yaw_error / 2) ^ 2), 20)
-				-- print(s)
 				if yaw_error < 0 then s = -s end
 				l = s
 				r = -s
@@ -110,41 +115,38 @@ d
 				power_level = clamp(1, math.abs(yaw_error) / 2, MAX_SPEED_ADJUST)
 
 				if output > 1 then
-					l = BASE_POWER + power_level
-					r = BASE_POWER - power_level
+					l = (drive_sign * BASE_POWER) + power_level
+					r = (drive_sign * BASE_POWER) - power_level
 				elseif output < -1 then
-					l = BASE_POWER - power_level
-					r = BASE_POWER + power_level
+					l = (drive_sign * BASE_POWER) - power_level
+					r = (drive_sign * BASE_POWER) + power_level
 				else
-					l = BASE_POWER
-					r = BASE_POWER
+					l = drive_sign * BASE_POWER
+					r = drive_sign * BASE_POWER
 				end
 				-- ?
 			end
-				
+			
 			print('L/R power:    ', math.floor(l), math.floor(r))
 			print('CCW:          ', do_ccw)
 
 			-- ! Set power
 			print('----')
 			if apply_dist_mult == false then dist_multiplier = 1 end
-			if do_ccw then
-				leftprop.setTargetSpeed(math.ceil(l * dist_multiplier))
-				rightprop.setTargetSpeed(math.ceil(r * dist_multiplier))
-			else
-				leftprop.setTargetSpeed(math.ceil(-l * dist_multiplier))
-				rightprop.setTargetSpeed(math.ceil(-r * dist_multiplier))
-			end
+			local left_speed = -l * dist_multiplier
+			local right_speed = -r * dist_multiplier
 
-			-- ! Set height
+			leftprop.setTargetSpeed(left_speed)
+			rightprop.setTargetSpeed(right_speed)
+
 			-- 4 is a nice hover highish-up, 15 is max
-			hover_power = 12
+			hover_power = 4
 			max_power = 15
 			height_power = clamp(hover_power, hover_power + ((hor_dist / 400) * (max_power - hover_power)), 15)
 			-- print('CCW:          ', do_ccw)
 			print('Height power: ', height_power)
 			-- print(height_power, 'h')
-			redstone.setAnalogOutput('right', height_power)
+			redstone.setAnalogOutput('left', height_power)
 
 		end
 	end

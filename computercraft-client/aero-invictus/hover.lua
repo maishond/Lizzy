@@ -1,1 +1,1 @@
-redstone.setAnalogOutput('top', 11)
+redstone.setAnalogOutput('top', 5)

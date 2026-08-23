@@ -10,7 +10,8 @@ keymap = {
 	howler = {x = 278, z = 87},
 	yogco = {x = 172, z = -15},
 	caney = {x = 78, z = 274},
-	desert = { x = 2714, z = 651 }
+	desert = { x = 2714, z = 651 },
+	spawn = { x = 156, z = 63 }
 }
 
 if x_or_name_arg == nil then
