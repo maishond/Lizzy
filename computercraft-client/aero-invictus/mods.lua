@@ -6,7 +6,6 @@ function angle_diff(current, target)
 end
 
 yaw_velocity_history = {}
-stable_ticks = 0
 last_yaw = 0
 
 -- BASE_POWER = 226

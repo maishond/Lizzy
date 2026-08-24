@@ -5,13 +5,15 @@ require 'mods'
 local x_or_name_arg, z_arg = ...
 
 keymap = {
+	spawn = { x = 156, z = 63 },
 	base = {x = -636, z = 1349},
-	project = {x = -119, z = 6},
-	howler = {x = 278, z = 87},
 	yogco = {x = 172, z = -15},
 	caney = {x = 78, z = 274},
+	p_ = {x = -119, z = 6},
+	howler = {x = 278, z = 87},
 	desert = { x = 2714, z = 651 },
-	spawn = { x = 156, z = 63 }
+	mc = { x = -121, z = 396 },
+	frozen = { x = 730, z = -19}
 }
 
 if x_or_name_arg == nil then
