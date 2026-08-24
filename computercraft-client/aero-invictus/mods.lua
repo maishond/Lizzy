@@ -97,7 +97,7 @@ function stabilise_at(px, pz)
 
 			last_yaw = yaw
 
-			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 1 and hor_dist < 40)
+			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 2 and hor_dist < 40)
 			-- rotate_in_place = true
 			print('Rotate CoM:   ', rotate_in_place)
 			apply_dist_mult = true

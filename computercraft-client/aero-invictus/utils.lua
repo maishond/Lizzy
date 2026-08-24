@@ -32,14 +32,16 @@ function angle_diff(a, b)
 end
 
 function get_state()
-	-- ! Self
-    local x, y, z = gps.locate(0.1)
-    -- local x, y, z = gps.locate(0.1)
-    if x then
+	-- ! PC is 13 (?) blocks from the center
+	local base_x, y, base_z = gps.locate(0.1)
+    if base_x then
+		local yaw = peripheral.wrap('bottom').getRelativeAngle() - 90
+		local yaw_rad = math.rad(yaw + 0)
+		x = base_x - 13 * math.sin(yaw_rad)
+		z = base_z - 13 * math.cos(yaw_rad)
 
 		local pitch = 0
 		local roll = 0
-		local yaw = peripheral.wrap('bottom').getRelativeAngle() - 90
 		
 		return x, y, z, pitch, yaw, roll
 	end
