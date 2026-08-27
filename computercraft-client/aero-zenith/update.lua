@@ -12,7 +12,7 @@ local urls = {
     ['mods.lua'] = baseUrl .. '/mods.lua',
     ['land.lua'] = baseUrl .. '/land.lua',
     ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
-    ['flip.lua'] = baseUrl .. '/flip.lua',
+    ['invert.lua'] = baseUrl .. '/invert.lua',
     ['stop.lua'] = baseUrl .. '/stop.lua',
 }
 

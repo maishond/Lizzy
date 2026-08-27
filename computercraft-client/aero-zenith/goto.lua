@@ -51,22 +51,20 @@ if x and z then
 	while cx == nil do
 		cx, cy, cz = get_state()
 	end
-	-- if cy < 200 then
-	-- 	play_warning()
-	-- 	take_off()
-	-- end
-	redstone.setAnalogOutput('front', 14)
-		
+	if cy < 200 then
+		-- play_warning()
+		take_off()
+	end
 	
 	print('Heading to', x, z)
 	stabilise_at(x, z)
 	
 	print('Stabilised at co-ords, landing!')
-	play_warning()
+	-- play_warning()
 	land()
 	
 	print('----')
-	print('Thank you for flying with the M-6')
+	print('Thank you for flying with the Zenith!')
 else
 	print('Invalid arguments')
 end

@@ -7,6 +7,7 @@ end
 
 yaw_velocity_history = {}
 last_yaw = 0
+stable_ticks = 0
 
 BASE_POWER = 226
 MAX_SPEED_ADJUST = 30
@@ -19,6 +20,17 @@ function take_off()
         frontprops.setTargetSpeed(i)
         rearprops.setTargetSpeed(i * reartofrontratio)
         sleep(0.5)
+    end
+end
+
+function land()
+    leftprops.setTargetSpeed(0)
+    rightprops.setTargetSpeed(0)
+    for i=frontprops.getTargetSpeed(), MIN_VERT_POWER, -5 do
+        print('Set vert power to', i)
+        frontprops.setTargetSpeed(i)
+        rearprops.setTargetSpeed(i * reartofrontratio)
+        os.sleep(0.5)
     end
 end
 
@@ -137,6 +149,17 @@ function stabilise_at(px, pz)
 			-- print('Height power: ', height_power)
 			-- -- print(height_power, 'h')
 			-- redstone.setAnalogOutput('left', height_power)
+
+            if hor_dist > 25 then
+                stable_ticks = 0
+            else
+                stable_ticks = stable_ticks + 1
+            end
+
+            if stable_ticks > 20 then
+                print('Arrived at destination')
+                break
+            end
 
 		end
 	end
