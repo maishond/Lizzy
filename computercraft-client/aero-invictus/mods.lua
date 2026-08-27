@@ -8,10 +8,10 @@ end
 yaw_velocity_history = {}
 last_yaw = 0
 
--- BASE_POWER = 226
--- MAX_SPEED_ADJUST = 30
 BASE_POWER = 226
 MAX_SPEED_ADJUST = 30
+-- BASE_POWER = 100
+-- MAX_SPEED_ADJUST = 80
 
 function take_off() 
 	print('Taking off')

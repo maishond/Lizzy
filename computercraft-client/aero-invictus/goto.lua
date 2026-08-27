@@ -6,8 +6,10 @@ local x_or_name_arg, z_arg = ...
 
 keymap = {
 	spawn = { x = 156, z = 63 },
-	base = {x = -636, z = 1349},
-	yogco = {x = 172, z = -15},
+	-- base = {x = -636, z = 1349},
+	base = {x = -606, z = 1590},
+	-- yogco = {x = 172, z = -15},
+	yogco = {x = 123, z = -71},
 	caney = {x = 78, z = 274},
 	p_ = {x = -119, z = 6},
 	howler = {x = 278, z = 87},
