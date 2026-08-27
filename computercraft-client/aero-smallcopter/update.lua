@@ -1,20 +1,13 @@
-local hostName = 'lizzy.jipfr.nl/aero-zenith'
+local hostName = 'lizzy.jipfr.nl/aero-smallcopter'
 local baseUrl = 'https://' .. hostName
 
 local urls = {
     ['update.lua'] = baseUrl .. '/update.lua',
     ['startup.lua'] = baseUrl .. '/startup.lua',
-    ['utils.lua'] = baseUrl .. '/utils.lua',
-    ['telemetry.lua'] = baseUrl .. '/telemetry.lua',
-    ['mobile.lua'] = baseUrl .. '/mobile.lua',
-    ['reset.lua'] = baseUrl .. '/reset.lua',
-    ['goto.lua'] = baseUrl .. '/goto.lua',
     ['mods.lua'] = baseUrl .. '/mods.lua',
-    ['land.lua'] = baseUrl .. '/land.lua',
-    ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
-    ['invert.lua'] = baseUrl .. '/invert.lua',
-    ['stop.lua'] = baseUrl .. '/stop.lua',
-    ['flip.lua'] = baseUrl .. '/flip.lua'
+    ['goto.lua'] = baseUrl .. '/goto.lua',
+    ['mobile.lua'] = baseUrl .. '/mobile.lua',
+    ['master.lua'] = baseUrl .. '/master.lua',
 }
 
 -- Loop over urls
