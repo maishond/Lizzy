@@ -5,6 +5,11 @@ local urls = {
     ['update.lua'] = baseUrl .. '/update.lua',
     ['startup.lua'] = baseUrl .. '/startup.lua',
     ['utils.lua'] = baseUrl .. '/utils.lua',
+    ['telemetry.lua'] = baseUrl .. '/telemetry.lua',
+    ['mobile.lua'] = baseUrl .. '/mobile.lua',
+    ['reset.lua'] = baseUrl .. '/reset.lua',
+    ['goto.lua'] = baseUrl .. '/goto.lua',
+    ['mods.lua'] = baseUrl .. '/mods.lua'
 }
 
 -- Loop over urls
