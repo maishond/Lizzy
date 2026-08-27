@@ -6,40 +6,31 @@ function angle_diff(current, target)
 end
 
 yaw_velocity_history = {}
-stable_ticks = 0
 last_yaw = 0
 
-MAX_SPEED = 200
+BASE_POWER = 226
+MAX_SPEED_ADJUST = 30
+-- BASE_POWER = 100
+-- MAX_SPEED_ADJUST = 80
 
 function take_off() 
-	print('Taking off')
-	for i=1,4 do
-		print('Set power to', 10+i)
-		redstone.setAnalogOutput('front', 10+i)
-		sleep(7)
-	end
-	while true do
-		x, y, z = get_state()
-		if y and y > 290 then
-			print('Y >= 290 passed! Time to let it stabilise for a bit')
-			sleep(15)
-			break
-		end
-	end
-	print('Take-off complete!')
+    for i=frontprops.getTargetSpeed(), MAX_VERT_POWER, 5 do
+        print('Vert power to', i)
+        frontprops.setTargetSpeed(i)
+        rearprops.setTargetSpeed(i * reartofrontratio)
+        sleep(0.5)
+    end
 end
 
 function stabilise_at(px, pz)
 	last_yaw_adjust = 0
 	while true do
-        print(1)
 		x, y, z, pitch, yaw, roll = get_state()
-        print(2)
 		if x then
 			x_diff = x - px
 			z_diff = z - pz
 
-			destination_angle = math.deg(math.atan2(z_diff, x_diff)) + 180
+			destination_angle = math.deg(math.atan2(x_diff, z_diff)) - 90
 			yaw_error = angle_diff(destination_angle, yaw)
 
 			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
@@ -51,7 +42,7 @@ function stabilise_at(px, pz)
 			dist_multiplier = clamp(0, dist_multiplier_v, 1)
 
 			print('Yaw_err:      ', math.floor(yaw_error + 0.5))
-
+			
 			-- ! Since the airship can go forward and backward (being symmetrical in that aspect), adjust the yaw and desired prop direction
 			do_ccw = false
 			if math.abs(yaw_error) > 90 and hor_dist < 100 then
@@ -63,7 +54,7 @@ function stabilise_at(px, pz)
 				end
 				yaw_error = ((yaw_error + 180) % 360) - 180
 			end
-
+			
 			print('Yaw error 2:  ', math.floor(yaw_error + 0.5))
 			print('Dest yaw:     ', math.floor(destination_angle + 0.5))
 			print('Current yaw:  ', math.floor(yaw + 0.5))
@@ -75,11 +66,13 @@ function stabilise_at(px, pz)
 			
 
 			-- ! Calculate turning power with distance to goal in mind
-			BASE_POWER = 226
-			MAX_SPEED_ADJUST = 30
 
 			local l = BASE_POWER
 			local r = BASE_POWER
+			local drive_sign = 1
+			if do_ccw then
+				drive_sign = -1
+			end
 
 			-- ?
 			table.insert(yaw_velocity_history, 1, last_yaw - yaw)
@@ -95,16 +88,16 @@ function stabilise_at(px, pz)
 
 			last_yaw = yaw
 
-			rotate_in_place = math.abs(yaw_error) > 60 or (math.abs(yaw_error) >= 1 and hor_dist < 40)
+			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 2 and hor_dist < 40)
+			-- rotate_in_place = true
 			print('Rotate CoM:   ', rotate_in_place)
 			apply_dist_mult = true
 			if rotate_in_place then
 				-- ! Rotate in place
 				s = clamp(0, math.abs((yaw_error / 2) ^ 2), 20)
-				-- print(s)
 				if yaw_error < 0 then s = -s end
-				l = -s
-				r = s * righttoleftratio
+				l = s
+				r = -s
 				apply_dist_mult = false
 			else
 				-- ! Move forward with 
@@ -112,77 +105,39 @@ function stabilise_at(px, pz)
 				power_level = clamp(1, math.abs(yaw_error) / 2, MAX_SPEED_ADJUST)
 
 				if output > 1 then
-					l = BASE_POWER - power_level
-					r = BASE_POWER + power_level
+					l = (drive_sign * BASE_POWER) + power_level
+					r = (drive_sign * BASE_POWER) - power_level
 				elseif output < -1 then
-					l = BASE_POWER + power_level
-					r = BASE_POWER - power_level
+					l = (drive_sign * BASE_POWER) - power_level
+					r = (drive_sign * BASE_POWER) + power_level
 				else
-					l = BASE_POWER
-					r = BASE_POWER
+					l = drive_sign * BASE_POWER
+					r = drive_sign * BASE_POWER
 				end
 				-- ?
 			end
-				
+			
 			print('L/R power:    ', math.floor(l), math.floor(r))
 			print('CCW:          ', do_ccw)
 
 			-- ! Set power
 			print('----')
 			if apply_dist_mult == false then dist_multiplier = 1 end
-            print('-1')
-			if do_ccw then
-                print('-2')
-				leftprops.setTargetSpeed(-r * dist_multiplier)
-				rightprops.setTargetSpeed(math.floor(-l * dist_multiplier * righttoleftratio))
-			else
-                print('-3')
-				leftprops.setTargetSpeed(r * dist_multiplier)
-				rightprops.setTargetSpeed(math.floor(l * dist_multiplier * righttoleftratio))
-			end
-            print('-4')
+			local left_speed = l * dist_multiplier
+			local right_speed = r * dist_multiplier
 
-			-- ! Set height
+			leftprops.setTargetSpeed(left_speed)
+			rightprops.setTargetSpeed(right_speed * righttoleftratio)
+
 			-- 4 is a nice hover highish-up, 15 is max
 			-- hover_power = 4
 			-- max_power = 15
 			-- height_power = clamp(hover_power, hover_power + ((hor_dist / 400) * (max_power - hover_power)), 15)
-			-- print(height_power, 'h')
-			-- redstone.setAnalogOutput('top', height_power)
+			print('CCW:          ', do_ccw)
+			-- print('Height power: ', height_power)
+			-- -- print(height_power, 'h')
+			-- redstone.setAnalogOutput('left', height_power)
 
 		end
-        print('-5')
 	end
-end
-
-function land() 
-	print('Landing')
-	local x, y, z
-	for i=1,3 do
-		print('Set power to', 14-i)
-		redstone.setAnalogOutput('front', 14-i)
-		sleep(16)
-	end
-	LOW_POWER = 5
-	redstone.setAnalogOutput('front', LOW_POWER)
-	print('Set power to', LOW_POWER)
-	print('Landed. Maybe upside down? I\'m a computer, how should I know')
-end
-
-function play_warning() 
-	return nil
-	-- print('playing warning')
-	-- local speaker = peripheral.find("speaker")
-	-- local dfpwm = require("cc.audio.dfpwm")
-
-	-- for i=1,5 do
-	-- 	local decoder = dfpwm.make_decoder()
-	-- 	for chunk in io.lines("landing.dfpwm", 16 * 1024) do
-	-- 		local buffer = decoder(chunk)
-	
-	-- 		while not speaker.playAudio(buffer, 2000) do
-	-- 			os.pullEvent("speaker_audio_empty")
-	-- 		end
-	-- 	end
-	-- end
 end

@@ -9,7 +9,11 @@ local urls = {
     ['mobile.lua'] = baseUrl .. '/mobile.lua',
     ['reset.lua'] = baseUrl .. '/reset.lua',
     ['goto.lua'] = baseUrl .. '/goto.lua',
-    ['mods.lua'] = baseUrl .. '/mods.lua'
+    ['mods.lua'] = baseUrl .. '/mods.lua',
+    ['land.lua'] = baseUrl .. '/land.lua',
+    ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
+    ['flip.lua'] = baseUrl .. '/flip.lua',
+    ['stop.lua'] = baseUrl .. '/stop.lua',
 }
 
 -- Loop over urls

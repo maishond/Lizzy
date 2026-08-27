@@ -15,5 +15,6 @@ while true do
         s = s .. 'Heading: ' .. heading
         print(s)
         modem.transmit(1337, 1335, s)
+        os.sleep(1)
     end
 end

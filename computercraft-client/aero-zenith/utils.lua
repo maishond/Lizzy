@@ -1,22 +1,22 @@
 
-navtable = peripheral.wrap('navigation_table_1')
-frontprops = peripheral.wrap('Create_RotationSpeedController_5')
-rearprops = peripheral.wrap('Create_RotationSpeedController_4')
-leftprops = peripheral.wrap('Create_RotationSpeedController_2')
-rightprops = peripheral.wrap('Create_RotationSpeedController_3')
+navtable = peripheral.wrap('navigation_table_2')
+frontprops = peripheral.wrap('Create_RotationSpeedController_9')
+rearprops = peripheral.wrap('Create_RotationSpeedController_6')
+leftprops = peripheral.wrap('Create_RotationSpeedController_8')
+rightprops = peripheral.wrap('Create_RotationSpeedController_7')
 
 reartofrontratio = 122/256
 righttoleftratio = 237/256
 
--- local basepower = 256
--- local horizontalpower = -256
+local basepower = 150
+MIN_VERT_POWER = 150
+MAX_VERT_POWER = 256
 -- frontprops.setTargetSpeed(basepower)
 -- rearprops.setTargetSpeed(basepower * reartofrontratio)
 
+-- local horizontalpower = -256
 -- leftprops.setTargetSpeed(horizontalpower)
 -- rightprops.setTargetSpeed(horizontalpower * righttoleftratio)
--- leftprops.setTargetSpeed(0)
--- rightprops.setTargetSpeed(0)
 
 function clamp(min, v, max)
     if v > max then return max end
@@ -28,10 +28,11 @@ function get_state()
 	-- ! PC is 13 (?) blocks from the center
 	local base_x, y, base_z = gps.locate(0.1)
     if base_x then
-		local yaw = navtable.getRelativeAngle() - 90
-		local yaw_rad = math.rad(yaw + 0)
-		x = base_x - 13 * math.sin(yaw_rad)
-		z = base_z - 13 * math.cos(yaw_rad)
+		local yaw = navtable.getRelativeAngle() - 180
+		local yaw_rad = math.rad(yaw - 90)
+		local distance = 55
+		x = base_x - distance * math.sin(yaw_rad)
+		z = base_z - distance * math.cos(yaw_rad)
 
 		local pitch = 0
 		local roll = 0
