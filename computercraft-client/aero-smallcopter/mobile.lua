@@ -15,7 +15,6 @@ local function update()
     t = os.time()
     print(t)
 
-
     local step = 80
     if held[65] then
         -- A

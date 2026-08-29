@@ -62,7 +62,7 @@ if x and z then
 	print('Stabilised at co-ords, landing!')
 	-- play_warning()
 	land()
-	
+	 
 	print('----')
 	print('Thank you for flying with the Zenith!')
 else

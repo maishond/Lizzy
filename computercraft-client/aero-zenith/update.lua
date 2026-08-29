@@ -14,7 +14,7 @@ local urls = {
     ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
     ['invert.lua'] = baseUrl .. '/invert.lua',
     ['stop.lua'] = baseUrl .. '/stop.lua',
-    ['flip.lua'] = baseUrl .. '/flip.lua'
+    ['storagemonitor.lua'] = baseUrl .. '/storagemonitor.lua'
 }
 
 -- Loop over urls
