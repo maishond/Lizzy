@@ -1,22 +1,19 @@
-local hostName = 'lizzy.jipfr.nl/aero-zenith'
+local hostName = 'lizzy.jipfr.nl/zenith-mobile'
 local baseUrl = 'https://' .. hostName
 
 local urls = {
     ['update.lua'] = baseUrl .. '/update.lua',
     ['startup.lua'] = baseUrl .. '/startup.lua',
-    ['utils.lua'] = baseUrl .. '/utils.lua',
-    ['telemetry.lua'] = baseUrl .. '/telemetry.lua',
-    ['mobile.lua'] = baseUrl .. '/mobile.lua',
-    ['reset.lua'] = baseUrl .. '/reset.lua',
+    ['info.lua'] = baseUrl .. '/info.lua',
     ['goto.lua'] = baseUrl .. '/goto.lua',
-    ['mods.lua'] = baseUrl .. '/mods.lua',
-    ['land.lua'] = baseUrl .. '/land.lua',
-    ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
+    ['reset.lua'] = baseUrl .. '/reset.lua',
     ['invert.lua'] = baseUrl .. '/invert.lua',
     ['stop.lua'] = baseUrl .. '/stop.lua',
-    ['storagemonitor.lua'] = baseUrl .. '/storagemonitor.lua',
+    ['flip.lua'] = baseUrl .. '/flip.lua',
+    ['summon.lua'] = baseUrl .. '/summon.lua',
+    ['land.lua'] = baseUrl .. '/land.lua',
+    ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
     ['lower.lua'] = baseUrl .. '/lower.lua',
-    ['listener.lua'] = baseUrl .. '/listener.lua'
 }
 
 -- Loop over urls
@@ -34,7 +31,6 @@ for key, url in pairs(urls) do
         local file = fs.open(key, 'w')
         file.write(responseText)
         file.close()
-        -- print('Saved ' .. key)
 
         -- Close response
         response.close()

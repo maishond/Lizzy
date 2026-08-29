@@ -30,7 +30,7 @@ function get_state()
     if base_x then
 		local yaw = navtable.getRelativeAngle() - 180
 		local yaw_rad = math.rad(yaw - 90)
-		local distance = 35
+		local distance = 45
 		x = base_x - distance * math.sin(yaw_rad)
 		z = base_z - distance * math.cos(yaw_rad)
 

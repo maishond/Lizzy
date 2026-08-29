@@ -6,4 +6,5 @@ elseif os.getComputerLabel() == 'Storage Monitor' then
     shell.run('storagemonitor')
 else
     shell.run('bg telemetry.lua')
+    shell.run('bg listener.lua')
 end

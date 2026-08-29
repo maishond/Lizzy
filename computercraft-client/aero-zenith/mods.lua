@@ -34,8 +34,13 @@ function land()
     end
 end
 
-function stabilise_at(px, pz)
+function stabilise_at(px, pz, args)
 	last_yaw_adjust = 0
+
+    -- Real-world start time
+    start_time = os.clock()
+    local start_distance = -1
+
 	while true do
 		x, y, z, pitch, yaw, roll = get_state()
 		if x then
@@ -46,6 +51,10 @@ function stabilise_at(px, pz)
 			yaw_error = angle_diff(destination_angle, yaw)
 
 			hor_dist = math.sqrt(x_diff^2 + z_diff^2)
+
+            if start_distance == -1 then
+                start_distance = hor_dist
+            end
 
 			max_distance_before_slowing = 800
 			distance_clamped = clamp(0, hor_dist, max_distance_before_slowing) / max_distance_before_slowing
@@ -161,6 +170,31 @@ function stabilise_at(px, pz)
                 break
             end
 
+            -- Telemetry string
+            
+            local telemetry = ''
+            telemetry = telemetry .. 'Args:            ' .. args
+            telemetry = telemetry .. '\nDestination:     ' .. math.floor(px) .. ' ' .. math.floor(pz)
+            -- telemetry = telemetry .. '\n'
+            telemetry = telemetry .. '\nYaw error:       ' .. math.floor(yaw_error)
+            telemetry = telemetry .. '\n'
+            telemetry = telemetry .. '\nStarted:         ' .. math.floor(os.clock() - start_time) .. 's ago'
+            -- telemetry = telemetry .. '\nStart distance:  ' .. math.floor(start_distance)
+            telemetry = telemetry .. '\nDistance:        ' .. math.floor(hor_dist)
+            telemetry = telemetry .. '\nProgress:        ' .. math.floor((1 - (hor_dist / start_distance)) * 100) .. '%'
+            local speed = math.abs(math.floor(peripheral.wrap('velocity_sensor_0').getVelocity() * 100) / 100)
+            if speed > 24 then
+                telemetry = telemetry .. '\nETA-ish:         ' .. math.floor(hor_dist / speed) .. 's'
+            else
+                telemetry = telemetry .. '\nETA-ish:         ' .. 'Dunno'
+            end
+
+            telemetry = telemetry .. '\nSpeed:           ' .. speed .. string.rep(' ', 5 - #tostring(speed)) .. ' m/s'
+
+            -- Write to 'telemetry.txt' file`
+            local telfile = fs.open('telemetry.txt', 'w')
+            telfile.write(telemetry)
+            telfile.close()
 		end
 	end
 end
