@@ -1,5 +1,24 @@
 require 'utils'
 
+-- Spintest
+-- function spintest()
+-- 	local last_x, last_z = 0, 0
+-- 	leftprops.setTargetSpeed(-50)
+-- 	rightprops.setTargetSpeed(50)
+	
+-- 	while true do
+-- 		local x, y, z = get_state()
+-- 		print(x, z)
+-- 		print(math.sqrt((last_x - x) ^ 2 + (last_z - z) ^ 2))
+-- 		print('-')
+-- 		last_x = x
+-- 		last_z = z
+-- 		sleep(0.1)
+-- 	end
+-- end
+
+-- spintest()
+
 function angle_diff(current, target)
     local diff = (target - current + 180) % 360 - 180
     return diff
@@ -56,7 +75,7 @@ function stabilise_at(px, pz, args)
                 start_distance = hor_dist
             end
 
-			max_distance_before_slowing = 800
+			max_distance_before_slowing = 1000
 			distance_clamped = clamp(0, hor_dist, max_distance_before_slowing) / max_distance_before_slowing
 			-- dist_multiplier_v = 1 - (1 - distance_clamped) * (1 - distance_clamped)
 			dist_multiplier_v = 1 - ((1 - distance_clamped) ^ 1.5)
@@ -109,21 +128,21 @@ function stabilise_at(px, pz, args)
 
 			last_yaw = yaw
 
-			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 2 and hor_dist < 40)
+			rotate_in_place = math.abs(yaw_error) > 30 or (math.abs(yaw_error) >= 5 and hor_dist < 40)
 			-- rotate_in_place = true
 			print('Rotate CoM:   ', rotate_in_place)
 			apply_dist_mult = true
 			if rotate_in_place then
 				-- ! Rotate in place
-				s = clamp(0, math.abs((yaw_error / 2) ^ 2), 20)
+				s = clamp(0, math.abs((yaw_error / 3) ^ 2), 40)
 				if yaw_error < 0 then s = -s end
 				l = s
 				r = -s
 				apply_dist_mult = false
 			else
 				-- ! Move forward with 
-				local output = 0.3 * yaw_error - 1 * yaw_velocity
-				power_level = clamp(1, math.abs(yaw_error) / 2, MAX_SPEED_ADJUST)
+				local output = 0.3 * yaw_error - 1.5 * yaw_velocity
+				power_level = clamp(1, math.abs(yaw_error * 2), MAX_SPEED_ADJUST)
 
 				if output > 1 then
 					l = (drive_sign * BASE_POWER) + power_level
@@ -159,13 +178,13 @@ function stabilise_at(px, pz, args)
 			-- -- print(height_power, 'h')
 			-- redstone.setAnalogOutput('left', height_power)
 
-            if hor_dist > 25 then
+            if hor_dist > 18 then
                 stable_ticks = 0
             else
                 stable_ticks = stable_ticks + 1
             end
 
-            if stable_ticks > 20 then
+            if stable_ticks > 5 then
                 print('Arrived at destination')
                 break
             end
@@ -173,8 +192,9 @@ function stabilise_at(px, pz, args)
             -- Telemetry string
             
             local telemetry = ''
-            telemetry = telemetry .. 'Args:            ' .. args
-            telemetry = telemetry .. '\nDestination:     ' .. math.floor(px) .. ' ' .. math.floor(pz)
+            telemetry = telemetry .. 'Args:             ' .. args
+            telemetry = telemetry .. '\nDestination:    ' .. math.floor(px) .. ' ' .. math.floor(pz)
+            telemetry = telemetry .. '\nCurrent:        ' .. math.floor(x) .. ' ' .. math.floor(z)
             -- telemetry = telemetry .. '\n'
             telemetry = telemetry .. '\nYaw error:       ' .. math.floor(yaw_error)
             telemetry = telemetry .. '\n'
@@ -182,7 +202,8 @@ function stabilise_at(px, pz, args)
             -- telemetry = telemetry .. '\nStart distance:  ' .. math.floor(start_distance)
             telemetry = telemetry .. '\nDistance:        ' .. math.floor(hor_dist)
             telemetry = telemetry .. '\nProgress:        ' .. math.floor((1 - (hor_dist / start_distance)) * 100) .. '%'
-            local speed = math.abs(math.floor(peripheral.wrap('velocity_sensor_0').getVelocity() * 100) / 100)
+            
+			local speed = math.abs(math.floor(peripheral.wrap('velocity_sensor_0').getVelocity() * 100) / 100)
             if speed > 24 then
                 telemetry = telemetry .. '\nETA-ish:         ' .. math.floor(hor_dist / speed) .. 's'
             else

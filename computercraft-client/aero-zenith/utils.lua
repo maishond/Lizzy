@@ -5,11 +5,11 @@ rearprops = peripheral.wrap('Create_RotationSpeedController_6')
 leftprops = peripheral.wrap('Create_RotationSpeedController_8')
 rightprops = peripheral.wrap('Create_RotationSpeedController_7')
 
-reartofrontratio = 128/256
+reartofrontratio = 126/256
 righttoleftratio = 237/256
 
 local basepower = 150
-MIN_VERT_POWER = 165
+MIN_VERT_POWER = 190
 MAX_VERT_POWER = 256
 -- frontprops.setTargetSpeed(basepower)
 -- rearprops.setTargetSpeed(basepower * reartofrontratio)
@@ -30,7 +30,7 @@ function get_state()
     if base_x then
 		local yaw = navtable.getRelativeAngle() - 180
 		local yaw_rad = math.rad(yaw - 90)
-		local distance = 45
+		local distance = 33.5
 		x = base_x - distance * math.sin(yaw_rad)
 		z = base_z - distance * math.cos(yaw_rad)
 

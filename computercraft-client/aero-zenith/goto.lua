@@ -12,7 +12,8 @@ keymap = {
 	base = {x = -592, z = 1413 },
 	-- yogco = {x = 172, z = -15},
 	yogco = {x = 123, z = -71 },
-	caney = {x = 78, z = 274 },
+	-- caney = {x = 78, z = 274 },
+	caney = {x = 175, z = 340 },
 	p_ = {x = -119, z = 6 },
 	howler = {x = 278, z = 87 },
 	desert = { x = 2714, z = 651 },
@@ -50,6 +51,16 @@ function main()
 	end
 	
 	if x and z then
+
+		-- To make it so the rope lands at the assigned coords, re-adjust the ship's desired coordinates so that the rope will align w/ the originals at a 0 yaw rotation 
+		local rope_long_dir_from_center = 11
+		local rope_width_dir_from_center = 13
+		-- local rope_angle_from_center = math.atan2(rope_long_dir_from_center, rope_width_dir_from_center)
+		-- local rope_dist_from_center = math.sqrt(rope_long_dir_from_center ^ 2 + rope_width_dir_from_center ^ 2)
+
+		x = x - rope_long_dir_from_center
+		z = z - rope_width_dir_from_center
+
 		modem.transmit(1339, 1338, 'OK')
 		local file = fs.open('telemetry.txt', 'w')
 		cx, cy, cz = get_state()
@@ -61,9 +72,14 @@ function main()
 		
 		if cy < 200 then
 			-- play_warning()
-			file.write('Taking off (to' .. x .. ' ' .. z .. ')')
+			file.write('Taking off (to ' .. x .. ' ' .. z .. ')')
 			file.close()
 			take_off()
+		end
+
+		local args = x_or_name_arg .. ' ' .. (z or '')
+		if keymap[x_or_name_arg] ~= nil then
+			args = x_or_name_arg
 		end
 		
 		print('Heading to', x, z)

@@ -4,8 +4,8 @@ require 'utils'
 print('Going up')
 
 
-rearprops.setTargetSpeed(256)
-frontprops.setTargetSpeed(-256)
+-- rearprops.setTargetSpeed(256)
+-- frontprops.setTargetSpeed(-256)
 
 -- for i=frontprops.getTargetSpeed(), MAX_VERT_POWER, 5 do
 --     print(i)
@@ -20,10 +20,10 @@ frontprops.setTargetSpeed(-256)
 
 -- print('FLIP IT!')
 
--- rearprops.setTargetSpeed(-256)
--- frontprops.setTargetSpeed(256)
+rearprops.setTargetSpeed(-256)
+frontprops.setTargetSpeed(256)
 
--- sleep(3)
--- print('Reset!')
+sleep(3)
+print('Reset!')
 
--- rearprops.setTargetSpeed(256 * reartofrontratio)
+rearprops.setTargetSpeed(256 * reartofrontratio)
