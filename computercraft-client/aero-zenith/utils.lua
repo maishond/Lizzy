@@ -6,7 +6,7 @@ leftprops = peripheral.wrap('Create_RotationSpeedController_8')
 rightprops = peripheral.wrap('Create_RotationSpeedController_7')
 
 reartofrontratio = 126/256
-righttoleftratio = 237/256
+righttoleftratio = 235/256
 
 local basepower = 150
 MIN_VERT_POWER = 190

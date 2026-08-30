@@ -43,7 +43,10 @@ function take_off()
 end
 
 function land()
-    leftprops.setTargetSpeed(0)
+    local file = fs.open('telemetry.txt', 'w')
+	file.write('Landing')
+	file.close()
+	leftprops.setTargetSpeed(0)
     rightprops.setTargetSpeed(0)
     for i=frontprops.getTargetSpeed(), MIN_VERT_POWER, -5 do
         print('Set vert power to', i)
@@ -82,6 +85,10 @@ function stabilise_at(px, pz, args)
 			dist_multiplier = clamp(0, dist_multiplier_v, 1)
 
 			print('Yaw_err:      ', math.floor(yaw_error + 0.5))
+
+			-- if stable_ticks > 5 then
+			-- 	yaw_error = yaw - 90
+			-- end
 			
 			-- ! Since the airship can go forward and backward (being symmetrical in that aspect), adjust the yaw and desired prop direction
 			do_ccw = false
@@ -106,7 +113,6 @@ function stabilise_at(px, pz, args)
 			
 
 			-- ! Calculate turning power with distance to goal in mind
-
 			local l = BASE_POWER
 			local r = BASE_POWER
 			local drive_sign = 1
@@ -156,9 +162,21 @@ function stabilise_at(px, pz, args)
 				end
 				-- ?
 			end
+
+			-- if y < 180 and not rotate_in_place then
+			if y < 180 then
+				l = clamp(-80, l, 80)
+				r = clamp(-80, r, 80)
+				-- l = 0 
+				-- r = 0
+			end
 			
+			hover_power = 170
+			max_power = 256
+			height_power = clamp(hover_power, hover_power + ((hor_dist / 400) * (max_power - hover_power)), max_power)
 			print('L/R power:    ', math.floor(l), math.floor(r))
 			print('CCW:          ', do_ccw)
+			print('Height power: ', height_power)
 
 			-- ! Set power
 			print('----')
@@ -170,47 +188,70 @@ function stabilise_at(px, pz, args)
 			rightprops.setTargetSpeed(right_speed * righttoleftratio)
 
 			-- 4 is a nice hover highish-up, 15 is max
-			-- hover_power = 4
-			-- max_power = 15
-			-- height_power = clamp(hover_power, hover_power + ((hor_dist / 400) * (max_power - hover_power)), 15)
-			print('CCW:          ', do_ccw)
-			-- print('Height power: ', height_power)
 			-- -- print(height_power, 'h')
 			-- redstone.setAnalogOutput('left', height_power)
+			frontprops.setTargetSpeed(height_power)
+			rearprops.setTargetSpeed(height_power * reartofrontratio)
 
-            if hor_dist > 18 then
+            if hor_dist > 10 then
                 stable_ticks = 0
             else
                 stable_ticks = stable_ticks + 1
             end
 
             if stable_ticks > 5 then
+				-- Turn to yaw 0
+				leftprops.setTargetSpeed(0)
+				rightprops.setTargetSpeed(0)
+				-- while true do
+				-- 	local x, y, z, pitch, yaw, roll = get_state()
+				-- 	yaw_error = yaw + 90
+				-- 	print('Defaulting to yaw 0')
+				-- 	print('Current yaw: ', yaw_error)
+
+				-- 	s = clamp(0, math.abs((yaw_error / 3) ^ 2), 40)
+				-- 	if yaw_error < 0 then s = -s end
+				-- 	l = s
+				-- 	r = -s
+				-- 	leftprops.setTargetSpeed(l)
+				-- 	rightprops.setTargetSpeed(r * righttoleftratio)
+
+				-- 	local telemetry = 'Aligning yaw, currently at ' .. yaw 
+
+				-- 	-- Write to 'telemetry.txt' file`
+				-- 	local telfile = fs.open('telemetry.txt', 'w')
+				-- 	telfile.write(telemetry)
+				-- 	telfile.close()
+				-- end
                 print('Arrived at destination')
-                break
+                -- break
             end
 
             -- Telemetry string
             
             local telemetry = ''
-            telemetry = telemetry .. 'Args:             ' .. args
+            telemetry = telemetry .. 'Args:           ' .. args
             telemetry = telemetry .. '\nDestination:    ' .. math.floor(px) .. ' ' .. math.floor(pz)
             telemetry = telemetry .. '\nCurrent:        ' .. math.floor(x) .. ' ' .. math.floor(z)
             -- telemetry = telemetry .. '\n'
-            telemetry = telemetry .. '\nYaw error:       ' .. math.floor(yaw_error)
+            telemetry = telemetry .. '\nYaw error:      ' .. math.floor(yaw_error)
             telemetry = telemetry .. '\n'
-            telemetry = telemetry .. '\nStarted:         ' .. math.floor(os.clock() - start_time) .. 's ago'
+            telemetry = telemetry .. '\nStarted:        ' .. math.floor(os.clock() - start_time) .. 's ago'
             -- telemetry = telemetry .. '\nStart distance:  ' .. math.floor(start_distance)
-            telemetry = telemetry .. '\nDistance:        ' .. math.floor(hor_dist)
-            telemetry = telemetry .. '\nProgress:        ' .. math.floor((1 - (hor_dist / start_distance)) * 100) .. '%'
+            telemetry = telemetry .. '\nDistance:       ' .. math.floor(hor_dist)
+            telemetry = telemetry .. '\nProgress:       ' .. math.floor((1 - (hor_dist / start_distance)) * 100) .. '%'
             
 			local speed = math.abs(math.floor(peripheral.wrap('velocity_sensor_0').getVelocity() * 100) / 100)
-            if speed > 24 then
-                telemetry = telemetry .. '\nETA-ish:         ' .. math.floor(hor_dist / speed) .. 's'
-            else
-                telemetry = telemetry .. '\nETA-ish:         ' .. 'Dunno'
-            end
+            -- if speed > 24 then
+            --     telemetry = telemetry .. '\nETA-ish:         ' .. math.floor(hor_dist / speed) .. 's'
+            -- else
+            --     telemetry = telemetry .. '\nETA-ish:         ' .. 'Dunno'
+            -- end
 
-            telemetry = telemetry .. '\nSpeed:           ' .. speed .. string.rep(' ', 5 - #tostring(speed)) .. ' m/s'
+            telemetry = telemetry .. '\nSpeed:          ' .. speed .. string.rep(' ', 5 - #tostring(speed)) .. ' m/s'
+            telemetry = telemetry .. '\nHeight power:   ' .. math.floor(height_power)
+            telemetry = telemetry .. '\nL/R power:      ' .. math.floor(l) .. ' ' .. math.floor(r)
+
 
             -- Write to 'telemetry.txt' file`
             local telfile = fs.open('telemetry.txt', 'w')

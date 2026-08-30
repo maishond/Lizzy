@@ -58,8 +58,8 @@ function main()
 		-- local rope_angle_from_center = math.atan2(rope_long_dir_from_center, rope_width_dir_from_center)
 		-- local rope_dist_from_center = math.sqrt(rope_long_dir_from_center ^ 2 + rope_width_dir_from_center ^ 2)
 
-		x = x - rope_long_dir_from_center
-		z = z - rope_width_dir_from_center
+		x = x + rope_long_dir_from_center
+		z = z + rope_width_dir_from_center
 
 		modem.transmit(1339, 1338, 'OK')
 		local file = fs.open('telemetry.txt', 'w')
@@ -70,12 +70,12 @@ function main()
 			cx, cy, cz = get_state()
 		end
 		
-		if cy < 200 then
-			-- play_warning()
-			file.write('Taking off (to ' .. x .. ' ' .. z .. ')')
-			file.close()
-			take_off()
-		end
+		-- if cy < 200 then
+		-- 	-- play_warning()
+		-- 	file.write('Taking off (to ' .. x .. ' ' .. z .. ')')
+		-- 	file.close()
+		-- 	take_off()
+		-- end
 
 		local args = x_or_name_arg .. ' ' .. (z or '')
 		if keymap[x_or_name_arg] ~= nil then
@@ -83,14 +83,11 @@ function main()
 		end
 		
 		print('Heading to', x, z)
-		stabilise_at(x, z, x_or_name_arg .. ' ' .. (z or ''))
+		stabilise_at(x, z, args)
 		
 		print('Stabilised at co-ords, landing!')
-		-- Clear file
-		local file = fs.open('telemetry.txt', 'w')
-		file.write('Landing')
-		file.close()
-		land()
+
+		-- land()
 		local file = fs.open('telemetry.txt', 'w')
 		file.write('')
 		file.close()
