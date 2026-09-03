@@ -45,7 +45,9 @@ while true do
         or cmd == 'land'
          then
             cleanfirst()
+            modem.transmit(1339, 1340, 'Running' .. cmd)
             shell.run('bg', cmd)
+            -- shell.run('bg', cmd)
             modem.transmit(1339, 1340, 'OK')
         end
     end

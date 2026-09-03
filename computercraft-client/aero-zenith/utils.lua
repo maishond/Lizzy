@@ -5,11 +5,12 @@ rearprops = peripheral.wrap('Create_RotationSpeedController_6')
 leftprops = peripheral.wrap('Create_RotationSpeedController_8')
 rightprops = peripheral.wrap('Create_RotationSpeedController_7')
 
-reartofrontratio = 126/256
-righttoleftratio = 235/256
+reartofrontratio = 118/256
+-- righttoleftratio = 235/256
+righttoleftratio = 256/256
 
 local basepower = 150
-MIN_VERT_POWER = 190
+MIN_VERT_POWER = 100
 MAX_VERT_POWER = 256
 -- frontprops.setTargetSpeed(basepower)
 -- rearprops.setTargetSpeed(basepower * reartofrontratio)

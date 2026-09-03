@@ -20,8 +20,15 @@ print('Going up')
 
 -- print('FLIP IT!')
 
-rearprops.setTargetSpeed(-256)
-frontprops.setTargetSpeed(256)
+local current_speed = frontprops.getTargetSpeed()
+if current_speed < 0 then
+    rearprops.setTargetSpeed(-256)
+    frontprops.setTargetSpeed(256)
+else
+    rearprops.setTargetSpeed(256)
+    frontprops.setTargetSpeed(-256)
+end
+
 
 sleep(3)
 print('Reset!')

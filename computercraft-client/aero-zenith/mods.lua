@@ -28,7 +28,7 @@ yaw_velocity_history = {}
 last_yaw = 0
 stable_ticks = 0
 
-BASE_POWER = 226
+BASE_POWER = -226
 MAX_SPEED_ADJUST = 30
 -- BASE_POWER = 100
 -- MAX_SPEED_ADJUST = 80
@@ -78,10 +78,11 @@ function stabilise_at(px, pz, args)
                 start_distance = hor_dist
             end
 
-			max_distance_before_slowing = 1000
+			max_distance_before_slowing = 600
 			distance_clamped = clamp(0, hor_dist, max_distance_before_slowing) / max_distance_before_slowing
 			-- dist_multiplier_v = 1 - (1 - distance_clamped) * (1 - distance_clamped)
-			dist_multiplier_v = 1 - ((1 - distance_clamped) ^ 1.5)
+			-- dist_multiplier_v = 1 - ((1 - distance_clamped) ^ 1.5)
+			dist_multiplier_v = distance_clamped
 			dist_multiplier = clamp(0, dist_multiplier_v, 1)
 
 			print('Yaw_err:      ', math.floor(yaw_error + 0.5))
@@ -142,8 +143,8 @@ function stabilise_at(px, pz, args)
 				-- ! Rotate in place
 				s = clamp(0, math.abs((yaw_error / 3) ^ 2), 40)
 				if yaw_error < 0 then s = -s end
-				l = s
-				r = -s
+				l = -s
+				r = s
 				apply_dist_mult = false
 			else
 				-- ! Move forward with 
@@ -151,11 +152,11 @@ function stabilise_at(px, pz, args)
 				power_level = clamp(1, math.abs(yaw_error * 2), MAX_SPEED_ADJUST)
 
 				if output > 1 then
-					l = (drive_sign * BASE_POWER) + power_level
-					r = (drive_sign * BASE_POWER) - power_level
-				elseif output < -1 then
 					l = (drive_sign * BASE_POWER) - power_level
 					r = (drive_sign * BASE_POWER) + power_level
+				elseif output < -1 then
+					l = (drive_sign * BASE_POWER) + power_level
+					r = (drive_sign * BASE_POWER) - power_level
 				else
 					l = drive_sign * BASE_POWER
 					r = drive_sign * BASE_POWER
@@ -171,7 +172,7 @@ function stabilise_at(px, pz, args)
 				-- r = 0
 			end
 			
-			hover_power = 170
+			hover_power = 100
 			max_power = 256
 			height_power = clamp(hover_power, hover_power + ((hor_dist / 400) * (max_power - hover_power)), max_power)
 			print('L/R power:    ', math.floor(l), math.floor(r))

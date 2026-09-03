@@ -53,13 +53,13 @@ function main()
 	if x and z then
 
 		-- To make it so the rope lands at the assigned coords, re-adjust the ship's desired coordinates so that the rope will align w/ the originals at a 0 yaw rotation 
-		local rope_long_dir_from_center = 11
-		local rope_width_dir_from_center = 13
+		-- local rope_long_dir_from_center = 11
+		-- local rope_width_dir_from_center = 13
 		-- local rope_angle_from_center = math.atan2(rope_long_dir_from_center, rope_width_dir_from_center)
 		-- local rope_dist_from_center = math.sqrt(rope_long_dir_from_center ^ 2 + rope_width_dir_from_center ^ 2)
 
-		x = x + rope_long_dir_from_center
-		z = z + rope_width_dir_from_center
+		-- x = x + rope_long_dir_from_center
+		-- z = z + rope_width_dir_from_center
 
 		modem.transmit(1339, 1338, 'OK')
 		local file = fs.open('telemetry.txt', 'w')
