@@ -1,5 +1,7 @@
 require 'utils'
 
+require 'reset'
+
 local points = tonumber(...)
 
 local msg = 'Lowering power by ' .. points .. ' points'
