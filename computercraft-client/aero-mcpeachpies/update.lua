@@ -1,4 +1,4 @@
-local hostName = 'lizzy.jipfr.nl/aero-invictus'
+local hostName = 'lizzy.jipfr.nl/aero-mcpeachpies'
 local baseUrl = 'https://' .. hostName
 
 local urls = {
@@ -8,9 +8,7 @@ local urls = {
     ['mods.lua'] = baseUrl .. '/mods.lua',
     ['reset.lua'] = baseUrl .. '/reset.lua',
     ['utils.lua'] = baseUrl .. '/utils.lua',
-    -- ['gridsearch.lua'] = baseUrl .. '/gridsearch.lua',
     ['forward.lua'] = baseUrl .. '/forward.lua',
-    ['landing.dfpwm'] = baseUrl .. '/landing.dfpwm',
     ['goto.lua'] = baseUrl .. '/goto.lua',
     ['spin.lua'] = baseUrl .. '/spin.lua',
 }

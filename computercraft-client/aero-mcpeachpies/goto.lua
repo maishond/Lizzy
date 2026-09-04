@@ -7,7 +7,7 @@ local x_or_name_arg, z_arg = ...
 keymap = {
 	spawn = { x = 156, z = 63 },
 	-- base = {x = -636, z = 1349},
-	base = {x = -606, z = 1590},
+	house = {x = -13, z = -7},
 	-- yogco = {x = 172, z = -15},
 	yogco = {x = 123, z = -71},
 	caney = {x = 78, z = 274},

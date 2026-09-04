@@ -1,5 +1,5 @@
-leftprop = peripheral.wrap('Create_RotationSpeedController_0')
-rightprop = peripheral.wrap('Create_RotationSpeedController_1')
+leftprop = peripheral.wrap('Create_RotationSpeedController_11')
+rightprop = peripheral.wrap('Create_RotationSpeedController_12')
 
 function split(str, delimiter)
     local result = {}
@@ -35,7 +35,7 @@ function get_state()
 	-- ! PC is 13 (?) blocks from the center
 	local base_x, y, base_z = gps.locate(0.1)
     if base_x then
-		local yaw = peripheral.wrap('bottom').getRelativeAngle() - 90
+		local yaw = peripheral.wrap('navigation_table_3').getRelativeAngle() - 180
 		local yaw_rad = math.rad(yaw + 0)
 		x = base_x - 13 * math.sin(yaw_rad)
 		z = base_z - 13 * math.cos(yaw_rad)

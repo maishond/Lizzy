@@ -1,7 +1,7 @@
 
 navtable = peripheral.wrap('navigation_table_2')
 frontprops = peripheral.wrap('Create_RotationSpeedController_9')
-rearprops = peripheral.wrap('Create_RotationSpeedController_6')
+rearprops = peripheral.wrap('Create_RotationSpeedController_13')
 leftprops = peripheral.wrap('Create_RotationSpeedController_8')
 rightprops = peripheral.wrap('Create_RotationSpeedController_7')
 
