@@ -40,11 +40,16 @@ while true do
         if cmd == 'stop' 
         or cmd == 'invert' 
         or cmd == 'reset' 
+        or cmd == 'doflip' 
         or cmd == 'flip'
         or cmd == 'takeoff'
         or cmd == 'land'
+        or cmd == 'spin'
          then
             cleanfirst()
+            local telfile = fs.open('telemetry.txt', 'w')
+            telfile.write('Running ' .. cmd .. '...')
+            telfile.close()
             modem.transmit(1339, 1340, 'Running' .. cmd)
             shell.run('bg', cmd)
             -- shell.run('bg', cmd)

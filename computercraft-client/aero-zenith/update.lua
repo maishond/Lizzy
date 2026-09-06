@@ -17,7 +17,9 @@ local urls = {
     ['storagemonitor.lua'] = baseUrl .. '/storagemonitor.lua',
     ['lower.lua'] = baseUrl .. '/lower.lua',
     ['listener.lua'] = baseUrl .. '/listener.lua',
-    ['flip.lua'] = baseUrl .. '/flip.lua'
+    ['flip.lua'] = baseUrl .. '/flip.lua',
+    ['spin.lua'] = baseUrl .. '/spin.lua',
+    ['doflip.lua'] = baseUrl .. '/doflip.lua',
 }
 
 -- Loop over urls

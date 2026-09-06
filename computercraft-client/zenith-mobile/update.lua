@@ -14,6 +14,7 @@ local urls = {
     ['land.lua'] = baseUrl .. '/land.lua',
     ['takeoff.lua'] = baseUrl .. '/takeoff.lua',
     ['lower.lua'] = baseUrl .. '/lower.lua',
+    ['progressmonitor.lua'] = baseUrl .. '/progressmonitor.lua',
 }
 
 -- Loop over urls
