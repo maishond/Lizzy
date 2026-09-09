@@ -1,11 +1,13 @@
 
-navtable = peripheral.wrap('navigation_table_2')
+navtable = peripheral.wrap('navigation_table_4')
 frontprops = peripheral.wrap('Create_RotationSpeedController_9')
 rearprops = peripheral.wrap('Create_RotationSpeedController_15')
 leftprops = peripheral.wrap('Create_RotationSpeedController_8')
 rightprops = peripheral.wrap('Create_RotationSpeedController_7')
 speedometer = peripheral.wrap('Create_Speedometer_1')
 stressometer = peripheral.wrap('Create_Stressometer_1')
+
+FULL_CAPACITY = 786402.0625
 
 reartofrontratio = 118/256
 -- righttoleftratio = 235/256

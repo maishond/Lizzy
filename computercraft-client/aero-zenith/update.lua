@@ -19,7 +19,7 @@ local urls = {
     ['listener.lua'] = baseUrl .. '/listener.lua',
     ['flip.lua'] = baseUrl .. '/flip.lua',
     ['spin.lua'] = baseUrl .. '/spin.lua',
-    ['doflip.lua'] = baseUrl .. '/doflip.lua',
+    ['physician.lua'] = baseUrl .. '/physician.lua',
 }
 
 -- Loop over urls

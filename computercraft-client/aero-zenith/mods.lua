@@ -242,7 +242,7 @@ function stabilise_at(px, pz, args)
             telemetry = telemetry .. '\nDistance:       ' .. math.floor(hor_dist)
             telemetry = telemetry .. '\nProgress:       ' .. math.floor((1 - (hor_dist / start_distance)) * 100) .. '%'
             
-			local speed = math.abs(math.floor(peripheral.wrap('velocity_sensor_0').getVelocity() * 100) / 100)
+			local speed = math.abs(math.floor(peripheral.wrap('velocity_sensor_1').getVelocity() * 100) / 100)
             -- if speed > 24 then
             --     telemetry = telemetry .. '\nETA-ish:         ' .. math.floor(hor_dist / speed) .. 's'
             -- else

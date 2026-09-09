@@ -14,13 +14,22 @@ while true do
 
     if x then
         s = ''
-        print('TELEMETRY')
-        -- s = s .. 'X:       ' .. math.floor(x) .. '\n'
-        -- s = s .. 'Y:       ' .. math.floor(y) .. '\n'
-        -- s = s .. 'Z:       ' .. math.floor(z) .. '\n'
-        s = s .. '    ' .. string.rep(' ', 5 - #tostring(math.floor(x))) .. math.floor(x) .. ' ' .. math.floor(y) .. ' ' .. math.floor(z)
+        s = s .. math.floor(x) .. ' ' .. math.floor(y) .. ' ' .. math.floor(z)
+        s = s .. '\nEngine RPM: ' .. speedometer.getSpeed()
 
-        s = s .. '\nY: ' .. math.floor(heading) .. '  P: ' .. string.format("%.2f", pitch) .. '  R: ' .. string.format("%.2f", roll)
+        local stress_capacity = stressometer.getStressCapacity()
+        local stress = stressometer.getStress()
+        local stress_used_percentage = math.floor((stress / stress_capacity * 100) + 0.5) 
+        local engine_status = 'operational' .. ' (' .. stress_used_percentage .. '%)'
+        if stress_used_percentage > 100 then
+            engine_status = 'overstressed' .. ' (' .. stress_used_percentage .. '%)'
+        end
+        if stress_capacity < FULL_CAPACITY then
+            engine_status = 'Starting (' .. math.floor(stress_capacity / FULL_CAPACITY * 100 + 0.5) .. ')'
+        end
+
+        s = s .. '\nEngine: ' .. engine_status
+        s = s .. '\nY:' .. math.floor(heading) .. ' P:' .. string.format("%.2f", pitch) .. ' R:' .. string.format("%.2f", roll)
         s = s .. '\n\n--------\n\n'
 
         -- Read telemetry from 'telemetry.txt' file
