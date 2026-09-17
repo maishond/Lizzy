@@ -182,8 +182,9 @@ function stabilise_at(px, pz, args)
 			-- ! Set power
 			print('----')
 			if apply_dist_mult == false then dist_multiplier = 1 end
-			local left_speed = l * dist_multiplier
-			local right_speed = r * dist_multiplier
+			local speed_multiplier = redstone.getAnalogInput('top') / 15
+			local left_speed = l * dist_multiplier * speed_multiplier
+			local right_speed = r * dist_multiplier * speed_multiplier
 
 			leftprops.setTargetSpeed(left_speed)
 			rightprops.setTargetSpeed(right_speed * righttoleftratio)

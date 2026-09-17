@@ -1,3 +1,5 @@
+require 'utils'
+
 local modem = peripheral.wrap('back')
 if not modem then
     error('No modem found')
@@ -25,18 +27,38 @@ while true do
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 
     if channel == 1338 then
-        print(message)
+        -- print(message)
 
-        for key, value in pairs(message or {}) do
-            print(key, ': ', value)
-        end
+        -- for key, value in pairs(message or {}) do
+        --     print(key, ': ', value)
+        -- end
 
         local cmd = message['command']
-
+        print(cmd)
         if cmd == 'goto' or cmd == 'lower' then
             cleanfirst()
             shell.run('bg', cmd, message['args'])
         end
+
+        if cmd == 'control' then
+            local telfile = fs.open('telemetry.txt', 'w')
+            telfile.write('Running manual control')
+            telfile.close()
+            cleanfirst()
+            print('OK1111', message['left'])
+            leftprops.setTargetSpeed(-message['left'])
+            rightprops.setTargetSpeed(-message['right'])
+            if message['up'] > 0 then
+                local height_power = frontprops.getTargetSpeed() + 1
+                frontprops.setTargetSpeed(height_power)
+    			rearprops.setTargetSpeed(height_power * reartofrontratio)
+            elseif message['up'] < 0 then
+                local height_power = frontprops.getTargetSpeed() - 1
+                frontprops.setTargetSpeed(height_power)
+    			rearprops.setTargetSpeed(height_power * reartofrontratio)
+            end
+        end
+
         if cmd == 'stop' 
         or cmd == 'invert' 
         or cmd == 'reset' 

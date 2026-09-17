@@ -66,5 +66,5 @@ while true do
     end
 
 
-    sleep(1)
+    sleep(10)
 end

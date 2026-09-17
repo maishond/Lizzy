@@ -13,4 +13,7 @@ for i=frontprops.getTargetSpeed(), MIN_VERT_POWER, -5 do
     os.sleep(0.5)
 end
 
+frontprops.setTargetSpeed(MIN_VERT_POWER)
+rearprops.setTargetSpeed(MIN_VERT_POWER * reartofrontratio)
+
 -- modem.transmit(1339, 1340, 'Power now at ' .. i)

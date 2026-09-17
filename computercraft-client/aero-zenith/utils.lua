@@ -9,7 +9,7 @@ stressometer = peripheral.wrap('Create_Stressometer_1')
 
 FULL_CAPACITY = 786402.0625
 
-reartofrontratio = 118/256
+reartofrontratio = 115/256
 -- righttoleftratio = 235/256
 righttoleftratio = 256/256
 
